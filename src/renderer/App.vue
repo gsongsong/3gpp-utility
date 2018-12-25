@@ -6,7 +6,7 @@
 
 <script>
   export default {
-    name: '3gpp-electron'
+    name: 'third-gen-electron'
   }
 </script>
 

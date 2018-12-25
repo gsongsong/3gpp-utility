@@ -1,4 +1,4 @@
-# 3gpp-electron
+# third-gen-electron
 
 > An electron-vue project
 

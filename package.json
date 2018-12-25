@@ -1,5 +1,5 @@
 {
-  "name": "3gpp-electron",
+  "name": "third-gen-electron",
   "version": "0.0.1",
   "author": "",
   "description": "An electron-vue project",
@@ -22,7 +22,7 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
-    "productName": "3gpp-electron",
+    "productName": "third-gen-electron",
     "appId": "com.example.yourapp",
     "directories": {
       "output": "build"
