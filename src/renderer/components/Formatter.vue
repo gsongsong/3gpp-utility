@@ -14,17 +14,20 @@
         </b-tag>
       </span>
     </b-field>
-    <b-field grouped>
-      <b-field class="control">
-        <b-input v-model="msgIeName" placeholder="Message/IE name" :disabled="specType === 'Unknown'"></b-input>
+    <div v-if="specType !== 'Unknown'">
+      <b-field class="control" grouped>
+        <b-input v-model="msgIeName" placeholder="Message/IE name"></b-input>
+        <b-checkbox v-model="doNotExpand" native-value="true" type="is-success">Do not expand sub-IE</b-checkbox>
+      </b-field>
+      <b-field grouped>
         <p class="control">
-          <button class="button is-success" :disabled="specType === 'Unknown' || !msgIeName">Format message/IE</button>
+          <button class="button is-success" :disabled="!msgIeName">Format message/IE</button>
+        </p>
+        <p class="control">
+          <button class="button is-success" v-if="specType === 'Application Protocol'">Format all</button>
         </p>
       </b-field>
-      <p class="control">
-        <button class="button is-success" v-if="specType === 'Application Protocol'">Format all</button>
-      </p>
-    </b-field>
+    </div>
   </div>
 </template>
 
@@ -34,7 +37,8 @@
       return {
         file: null,
         specType: 'Unknown',
-        msgIeName: null
+        msgIeName: null,
+        doNotExpand: []
       }
     },
     methods: {
