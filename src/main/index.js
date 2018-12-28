@@ -1,6 +1,6 @@
 'use strict'
 
-import { app, BrowserWindow } from 'electron'
+import { app, BrowserWindow, ipcMain } from 'electron'
 
 /**
  * Set `__static` path to static files in production
@@ -11,6 +11,7 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 let mainWindow
+let workerWindow
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
@@ -25,10 +26,24 @@ function createWindow () {
     width: 1000
   })
 
+  workerWindow = new BrowserWindow({show: false})
+  workerWindow.loadURL(`${winURL}#/worker`)
+  workerWindow.on('closed', () => {
+    app.quit()
+  })
+
+  ipcMain.on('format-request', (event, data) => {
+    workerWindow.webContents.send('format-request', data)
+  })
+
+  ipcMain.on('format-response', (event, data) => {
+    mainWindow.webContents.send('format-response', data)
+  })
+
   mainWindow.loadURL(winURL)
 
   mainWindow.on('closed', () => {
-    mainWindow = null
+    app.quit()
   })
 }
 
