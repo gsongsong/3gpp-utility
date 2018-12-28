@@ -23,6 +23,11 @@
             <button class="button is-success" v-if="!props.row.name" v-on:click="add">✚</button>
           </b-table-column>
         </template>
+        <template slot="footer">
+          <div class="has-text-right">
+            Frequency in MHz
+          </div>
+        </template>
       </b-table>
     </div>
   </div>

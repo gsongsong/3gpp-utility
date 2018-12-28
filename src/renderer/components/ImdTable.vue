@@ -12,6 +12,11 @@
             </div>
           </section>
         </template>
+        <template slot="footer">
+          <div class="has-text-right">
+            Frequency in MHz
+          </div>
+        </template>
       </b-table>
     </div>
   </div>
