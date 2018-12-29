@@ -110,9 +110,21 @@
     },
     mounted () {
       ipcRenderer.on('idc-response', (event, data) => {
-        let { bandsHarmonics, bandsImd } = JSON.parse(data)
-        this.bandsHarmonics = this.convertBandsIdcToFreqTable(bandsHarmonics)
-        this.bandsImd = this.convertBandsIdcToFreqTable(bandsImd)
+        let result = JSON.parse(data)
+        if (result.error) {
+          this.$snackbar.open({
+            message: result.error,
+            type: 'is-warning',
+            position: 'is-bottom-right',
+            actionText: 'Dismiss',
+            indefinite: true,
+            queue: false
+          })
+        } else {
+          let { bandsHarmonics, bandsImd } = result
+          this.bandsHarmonics = this.convertBandsIdcToFreqTable(bandsHarmonics)
+          this.bandsImd = this.convertBandsIdcToFreqTable(bandsImd)
+        }
         this.isFormatting = false
       })
     }
