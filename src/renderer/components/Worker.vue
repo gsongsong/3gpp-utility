@@ -11,7 +11,16 @@
   import { format as formatRan2 } from 'third-gen-message-formatter-ran2'
   import { parse as parseRan3, format as formatRan3 } from 'third-gen-message-formatter-ran3'
 
+  import { Band, calculateHarmonics, calculateIMD } from 'third-gen-distortion-calculator'
+
   export default {
+    methods: {
+      convertRatTableToBands (rat) {
+        for (let i = 0; i < rat.length; i++) {
+          rat[i] = new Band(rat[i].name, rat[i].fLow, rat[i].fHigh)
+        }
+      }
+    },
     mounted () {
       ipcRenderer.on('format-request', (event, data/* filePath, specType, msgIeName, doNotExpand */) => {
         let {filePath, specType, msgIeName, raw} = JSON.parse(data)
@@ -34,6 +43,43 @@
           result = {error: e}
         }
         event.sender.send('format-response', JSON.stringify(result))
+      })
+      ipcRenderer.on('idc-request', (event, data) => {
+        let { rat1Dl, rat1Ul, rat2Dl, rat2Ul, orderHarmonics, orderImd } = JSON.parse(data)
+        let result = {}
+        try {
+          this.convertRatTableToBands(rat1Dl)
+          this.convertRatTableToBands(rat1Ul)
+          this.convertRatTableToBands(rat2Dl)
+          this.convertRatTableToBands(rat2Ul)
+          let bandsHarmonics = []
+          let bandsImd = []
+          for (let order = 2; order <= orderHarmonics; order++) {
+            if (rat1Ul.length && rat2Dl.length) {
+              bandsHarmonics = bandsHarmonics.concat(calculateHarmonics(rat1Ul, rat2Dl, order))
+            }
+            if (rat2Ul.length && rat1Dl.length) {
+              bandsHarmonics = bandsHarmonics.concat(calculateHarmonics(rat2Ul, rat1Dl, order))
+            }
+          }
+          for (let order = 2; order <= orderImd; order++) {
+            if (rat1Ul.length && rat2Ul.length) {
+              if (rat1Dl.length) {
+                bandsImd = bandsImd.concat(calculateIMD(rat1Ul, rat2Ul, rat1Dl, order))
+              }
+              if (rat2Dl.length) {
+                bandsImd = bandsImd.concat(calculateIMD(rat1Ul, rat2Ul, rat2Dl, order))
+              }
+            }
+          }
+          result = {
+            bandsHarmonics: bandsHarmonics,
+            bandsImd: bandsImd
+          }
+        } catch (e) {
+          result = {error: e}
+        }
+        event.sender.send('idc-response', JSON.stringify(result))
       })
     }
   }
