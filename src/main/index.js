@@ -21,9 +21,9 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    height: 600,
+    minHeight: 600,
     useContentSize: true,
-    width: 1200
+    minWidth: 1200
   })
 
   workerWindow = new BrowserWindow({show: false})
