@@ -26,7 +26,7 @@ function createWindow () {
     minWidth: 1200
   })
 
-  workerWindow = new BrowserWindow({show: false})
+  workerWindow = new BrowserWindow({show: process.env.NODE_ENV === 'development'})
   workerWindow.loadURL(`${winURL}#/worker`)
   workerWindow.on('closed', () => {
     app.quit()
