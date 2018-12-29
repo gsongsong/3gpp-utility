@@ -4,7 +4,7 @@
       {{ heading }}
     </div>
     <div class="panel-block">
-      <b-table :data="data" striped narrowed hoverable>
+      <b-table class="table is-fullwidth" :data="data" striped narrowed hoverable>
         <template slot-scope="props">
           <b-table-column field="name" label="Name">
             {{ props.row.name ? props.row.name : '' }}
@@ -12,11 +12,11 @@
           </b-table-column>
           <b-table-column field="fLow" label="Freq Low" centered="">
             {{ props.row.fLow ? props.row.fLow : '' }}
-            <b-input v-if="!props.row.fLow" v-model="fLowTemp"></b-input>
+            <b-input type="number" v-if="!props.row.fLow" v-model="fLowTemp"></b-input>
           </b-table-column>
           <b-table-column field="fHigh" label="Freq High" centered>
             {{ props.row.fHigh ? props.row.fHigh : '' }}
-            <b-input v-if="!props.row.fHigh" v-model="fHighTemp"></b-input>
+            <b-input type="number" v-if="!props.row.fHigh" v-model="fHighTemp"></b-input>
           </b-table-column>
           <b-table-column field="button">
             <button class="button is-danger" v-if="props.row.name" v-on:click="remove(props.row.id)">🞬</button>
@@ -51,17 +51,21 @@
       }
     },
     methods: {
+      emitDataChanged: function () {
+        this.$emit('data-changed', this.data.slice(0, this.data.length - 1))
+      },
       add: function () {
         if (this.nameTemp && this.fLowTemp && this.fHighTemp) {
           this.data.splice(this.data.length - 1, 0, {
             id: this.data.length - 1,
             name: this.nameTemp,
-            fLow: this.fLowTemp,
-            fHigh: this.fHighTemp
+            fLow: Number(this.fLowTemp),
+            fHigh: Number(this.fHighTemp)
           })
           this.nameTemp = null
           this.fLowTemp = null
           this.fHighTemp = null
+          this.emitDataChanged()
         }
       },
       remove: function (id) {
@@ -69,6 +73,7 @@
           return row.id === id
         })
         this.data.splice(index, 1)
+        this.emitDataChanged()
       }
     }
   }

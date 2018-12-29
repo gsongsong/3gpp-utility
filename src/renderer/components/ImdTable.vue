@@ -4,7 +4,7 @@
       {{ heading }}
     </div>
     <div class="panel-block">
-      <b-table :columns="columns" :data="data">
+      <b-table class="table is-fullwidth" :columns="columns" :data="data">
         <template slot="empty">
           <section class="section">
             <div class="content has-text-grey has-text-centered">
@@ -27,6 +27,9 @@
     props: {
       heading: {
         type: String
+      },
+      data: {
+        type: Array
       }
     },
     data () {
@@ -40,8 +43,6 @@
           {field: 'fLow', label: 'Freq Low', centered: true},
           {field: 'fHigh', label: 'Freq High', centered: true},
           {field: 'victim', label: 'Victim'}
-        ],
-        data: [
         ]}
     }
   }

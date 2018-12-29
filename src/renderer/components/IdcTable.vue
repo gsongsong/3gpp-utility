@@ -36,7 +36,7 @@
       return {
         columns: [
           {field: 'order', label: 'Order', centered: true},
-          {field: 'interferer', label: 'Interferer'},
+          {field: 'name', label: 'Name'},
           {field: 'fLow', label: 'Freq Low', centered: true},
           {field: 'fHigh', label: 'Freq High', centered: true},
           {field: 'victim', label: 'Victim'}
