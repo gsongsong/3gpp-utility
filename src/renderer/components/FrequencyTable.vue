@@ -40,7 +40,8 @@
   export default {
     props: {
       heading: {
-        type: String
+        type: String,
+        default: 'Frequency Table'
       }
     },
     data () {
