@@ -20,12 +20,22 @@
     </div>
     <div class="columns is-centered">
       <div class="column is-one-quarter has-text-centered">
-        <b-field label="Harmonics order from 2 to">
+        <b-field position="is-centered">
+          <p class="control">
+            <span class="button is-static">
+              Harmonics order up to
+            </span>
+          </p>
           <b-input type="number" min="2" max="9" v-model="orderHarmonics"></b-input>
         </b-field>
       </div>
       <div class="column is-one-quarter has-text-centered">
-        <b-field label="IMD order from 2 to">
+        <b-field position="is-centered">
+          <p class="control">
+            <span class="button is-static">
+              IMD order up to
+            </span>
+          </p>
           <b-input type="number" min="2" max="9" v-model="orderImd"></b-input>
         </b-field>
       </div>
