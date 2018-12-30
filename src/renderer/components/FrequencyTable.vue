@@ -1,7 +1,10 @@
 <template>
   <div class="panel">
     <div class="panel-heading">
-      {{ heading }}
+      <span v-if="!isEditing" v-on:click="isEditing = true">
+        {{ heading }}
+      </span>
+      <b-input v-model="heading" v-if="isEditing" v-on:blur="isEditing = false"></b-input>
     </div>
     <div class="panel-block">
       <b-table class="table is-fullwidth" :data="data" striped narrowed hoverable>
@@ -42,6 +45,7 @@
     },
     data () {
       return {
+        isEditing: false,
         data: [
           {}
         ],
