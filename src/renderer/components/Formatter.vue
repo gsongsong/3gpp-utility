@@ -105,19 +105,30 @@
             defaultPath: `${defaultPathDir}/${msgIeName}${pathParsed.name}${raw}.xlsx`
           })
           if (savePath) {
-            this.defaultPathDir = parse(savePath).dir
-            xlsx.writeFile(result, savePath)
-            this.$snackbar.open({
-              message: 'Formatting success',
-              type: 'is-success',
-              position: 'is-bottom-right',
-              actionText: 'Open folder',
-              duration: 10 * 1000,
-              queue: false,
-              onAction: () => {
-                shell.openExternal(this.defaultPathDir)
-              }
-            })
+            try {
+              this.defaultPathDir = parse(savePath).dir
+              xlsx.writeFile(result, savePath)
+              this.$snackbar.open({
+                message: 'Formatting success',
+                type: 'is-success',
+                position: 'is-bottom-right',
+                actionText: 'Open folder',
+                duration: 10 * 1000,
+                queue: false,
+                onAction: () => {
+                  shell.openExternal(this.defaultPathDir)
+                }
+              })
+            } catch (e) {
+              this.$snackbar.open({
+                message: e,
+                type: 'is-warning',
+                position: 'is-bottom-right',
+                actionText: 'Dismiss',
+                indefinite: true,
+                queue: false
+              })
+            }
           } else {
             this.$snackbar.open({
               message: 'Save aborted',
