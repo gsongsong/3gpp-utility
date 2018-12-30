@@ -35,7 +35,7 @@
         <button class="button is-success" v-on:click="calculate">
           Calculate
         </button>
-        <b-loading :active.sync="isFormatting" :is-full-page="true"></b-loading>
+        <b-loading :active.sync="isWorking" :is-full-page="true"></b-loading>
       </div>
     </div>
     <div class="columns is-centered">
@@ -72,7 +72,7 @@
         rat2Ul: [],
         orderHarmonics: 2,
         orderImd: 2,
-        isFormatting: false,
+        isWorking: false,
         bandsHarmonics: [],
         bandsImd: []
       }
@@ -94,7 +94,7 @@
         return freqs
       },
       calculate: function () {
-        this.isFormatting = true
+        this.isWorking = true
         ipcRenderer.send('idc-request', JSON.stringify({
           rat1Dl: this.rat1Dl,
           rat1Ul: this.rat1Ul,
@@ -125,7 +125,7 @@
           this.bandsHarmonics = this.convertBandsIdcToFreqTable(bandsHarmonics)
           this.bandsImd = this.convertBandsIdcToFreqTable(bandsImd)
         }
-        this.isFormatting = false
+        this.isWorking = false
       })
     }
   }
