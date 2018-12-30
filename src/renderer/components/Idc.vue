@@ -68,11 +68,43 @@
 
 <script>
   import { parse } from 'path'
-  import { ipcRenderer, remote } from 'electron'
+  import { ipcRenderer, remote, shell } from 'electron'
   import * as xl from 'excel4node'
 
   import FrequencyTable from './FrequencyTable'
   import IdcTable from './IdcTable'
+
+  let xlStyleBorderThinBlack = {
+    style: 'thin',
+    color: '#000000'
+  }
+  let xlStyleBorderLeftTop = {
+    border: {
+      left: xlStyleBorderThinBlack,
+      top: xlStyleBorderThinBlack
+    }
+  }
+  let xlStyleBorderTop = {
+    border: {
+      top: xlStyleBorderThinBlack
+    }
+  }
+  let xlStyleBorderTopRight = {
+    border: {
+      top: xlStyleBorderThinBlack,
+      right: xlStyleBorderThinBlack
+    }
+  }
+  let xlStyleBorderLeft = {
+    border: {
+      left: xlStyleBorderThinBlack
+    }
+  }
+  let xlStyleBorderRight = {
+    border: {
+      right: xlStyleBorderThinBlack
+    }
+  }
 
   export default {
     components: { FrequencyTable, IdcTable },
@@ -90,7 +122,8 @@
         orderImd: 2,
         isWorking: false,
         bandsHarmonics: [],
-        bandsImd: []
+        bandsImd: [],
+        defaultPathDir: null
       }
     },
     methods: {
@@ -126,36 +159,58 @@
       insertFreqTable (freqs, heading, ws, rowStart, colStart) {
         let row = rowStart
         let col = colStart
-        ws.cell(row, col).string(heading)
+        ws.cell(row, col++).string(heading).style(xlStyleBorderLeftTop)
+        ws.cell(row, col++).style(xlStyleBorderTop)
+        ws.cell(row, col++).style(xlStyleBorderTopRight)
         row++
-        ws.cell(row, col).string('Name')
-        ws.cell(row, col + 1).string('Freq Low')
-        ws.cell(row, col + 2).string('Freq High')
+        col = colStart
+        ws.cell(row, col++).string('Name').style(xlStyleBorderLeft)
+        ws.cell(row, col++).string('Freq Low')
+        ws.cell(row, col++).string('Freq High').style(xlStyleBorderRight)
         for (let freq of freqs) {
           row++
-          ws.cell(row, col).string(freq.name)
-          ws.cell(row, col + 1).number(freq.fLow)
-          ws.cell(row, col + 2).number(freq.fHigh)
+          col = colStart
+          ws.cell(row, col++).string(freq.name).style(xlStyleBorderLeft)
+          ws.cell(row, col++).number(freq.fLow)
+          ws.cell(row, col++).number(freq.fHigh).style(xlStyleBorderRight)
         }
+        row++
+        col = colStart
+        ws.cell(row, col++).style(xlStyleBorderTop)
+        ws.cell(row, col++).style(xlStyleBorderTop)
+        ws.cell(row, col++).style(xlStyleBorderTop)
       },
       insertIdcFreqTable (freqs, heading, ws, rowStart, colStart) {
         let row = rowStart
         let col = colStart
-        ws.cell(row, col).string(heading)
+        ws.cell(row, col++).string(heading).style(xlStyleBorderLeftTop)
+        ws.cell(row, col++).style(xlStyleBorderTop)
+        ws.cell(row, col++).style(xlStyleBorderTop)
+        ws.cell(row, col++).style(xlStyleBorderTop)
+        ws.cell(row, col++).style(xlStyleBorderTopRight)
         row++
-        ws.cell(row, col).string('Order')
-        ws.cell(row, col + 1).string('Name')
-        ws.cell(row, col + 2).string('Freq Low')
-        ws.cell(row, col + 3).string('Freq High')
-        ws.cell(row, col + 4).string('Victim')
+        col = colStart
+        ws.cell(row, col++).string('Order').style(xlStyleBorderLeft)
+        ws.cell(row, col++).string('Name')
+        ws.cell(row, col++).string('Freq Low')
+        ws.cell(row, col++).string('Freq High')
+        ws.cell(row, col++).string('Victim').style(xlStyleBorderRight)
         for (let freq of freqs) {
           row++
-          ws.cell(row, col).number(freq.order)
-          ws.cell(row, col + 1).string(freq.name)
-          ws.cell(row, col + 2).number(freq.fLow)
-          ws.cell(row, col + 3).number(freq.fHigh)
-          ws.cell(row, col + 4).string(freq.victim)
+          col = colStart
+          ws.cell(row, col++).number(freq.order).style(xlStyleBorderLeft)
+          ws.cell(row, col++).string(freq.name)
+          ws.cell(row, col++).number(freq.fLow)
+          ws.cell(row, col++).number(freq.fHigh)
+          ws.cell(row, col++).string(freq.victim).style(xlStyleBorderRight)
         }
+        row++
+        col = colStart
+        ws.cell(row, col++).style(xlStyleBorderTop)
+        ws.cell(row, col++).style(xlStyleBorderTop)
+        ws.cell(row, col++).style(xlStyleBorderTop)
+        ws.cell(row, col++).style(xlStyleBorderTop)
+        ws.cell(row, col++).style(xlStyleBorderTop)
       },
       save: function () {
         if (!this.bandsHarmonics.length && !this.bandsImd.length) {
@@ -164,22 +219,53 @@
         this.isWorking = true
         let wb = new xl.Workbook()
         let ws = wb.addWorksheet('Sheet 1')
-        this.insertFreqTable(this.rat1Dl, this.rat1DlHeading, ws, 1, 2)
-        this.insertFreqTable(this.rat1Ul, this.rat1UlHeading, ws, 1, 6)
-        this.insertFreqTable(this.rat2Dl, this.rat2DlHeading, ws, 1, 10)
-        this.insertFreqTable(this.rat2Ul, this.rat2UlHeading, ws, 1, 14)
+        this.insertFreqTable(this.rat1Dl, this.rat1DlHeading, ws, 2, 3)
+        this.insertFreqTable(this.rat1Ul, this.rat1UlHeading, ws, 2, 7)
+        this.insertFreqTable(this.rat2Dl, this.rat2DlHeading, ws, 2, 11)
+        this.insertFreqTable(this.rat2Ul, this.rat2UlHeading, ws, 2, 15)
         let maxNumFreqs = Math.max(this.rat1Dl.length, this.rat1Ul.length, this.rat2Dl.length, this.rat2Ul.length)
-        this.insertIdcFreqTable(this.bandsHarmonics, 'Harmonic Interference', ws, maxNumFreqs + 4, 1)
-        this.insertIdcFreqTable(this.bandsImd, 'IMD Interference', ws, maxNumFreqs + 4, 9)
+        this.insertIdcFreqTable(this.bandsHarmonics, 'Harmonic Interference', ws, maxNumFreqs + 5, 2)
+        this.insertIdcFreqTable(this.bandsImd, 'IMD Interference', ws, maxNumFreqs + 5, 10)
         let savePath = remote.dialog.showSaveDialog({
-          defaultPath: this.defaultPath ? this.defaultPath : null,
+          defaultPath: this.defaultPathDir ? this.defaultPathDir : null,
           filters: [
             {name: 'XLSX', extensions: ['xlsx']}
           ]
         })
         if (savePath) {
-          this.defaultPath = parse(savePath).dir
-          wb.write(savePath)
+          try {
+            this.defaultPathDir = parse(savePath).dir
+            wb.write(savePath)
+            this.$snackbar.open({
+              message: 'Formatting success',
+              type: 'is-success',
+              position: 'is-bottom-right',
+              actionText: 'Open folder',
+              duration: 10 * 1000,
+              queue: false,
+              onAction: () => {
+                shell.openExternal(this.defaultPathDir)
+              }
+            })
+          } catch (e) {
+            this.$snackbar.open({
+              message: e,
+              type: 'is-warning',
+              position: 'is-bottom-right',
+              actionText: 'Dismiss',
+              indefinite: true,
+              queue: false
+            })
+          }
+        } else {
+          this.$snackbar.open({
+            message: 'Save aborted',
+            type: 'is-warning',
+            position: 'is-bottom-right',
+            actionText: 'Dismiss',
+            duration: 3 * 1000,
+            queue: false
+          })
         }
         this.isWorking = false
       }
