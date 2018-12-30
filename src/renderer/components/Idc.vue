@@ -67,6 +67,7 @@
 </template>
 
 <script>
+  import { writeFileSync } from 'fs'
   import { parse } from 'path'
   import { ipcRenderer, remote, shell } from 'electron'
   import * as xl from 'excel4node'
@@ -235,6 +236,7 @@
         if (savePath) {
           try {
             this.defaultPathDir = parse(savePath).dir
+            writeFileSync(savePath, '') // Try-catch hack because wb.write() does not throw an error
             wb.write(savePath)
             this.$snackbar.open({
               message: 'Formatting success',
