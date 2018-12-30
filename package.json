@@ -22,7 +22,7 @@
     "postinstall": "npm run lint:fix"
   },
   "build": {
-    "productName": "third-gen-electron",
+    "productName": "3GPP",
     "appId": "com.example.yourapp",
     "directories": {
       "output": "build"
