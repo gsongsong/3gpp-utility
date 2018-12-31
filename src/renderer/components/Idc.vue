@@ -118,8 +118,7 @@
         orderImd: 2,
         isWorking: false,
         bandsHarmonics: [],
-        bandsImd: [],
-        defaultPathDir: null
+        bandsImd: []
       }
     },
     methods: {
@@ -217,14 +216,12 @@
         this.insertIdcFreqTable(this.bandsHarmonics, 'Harmonic Interference', ws, maxNumFreqs + 5, 2)
         this.insertIdcFreqTable(this.bandsImd, 'IMD Interference', ws, maxNumFreqs + 5, 10)
         let savePath = remote.dialog.showSaveDialog({
-          defaultPath: this.defaultPathDir ? this.defaultPathDir : null,
           filters: [
             {name: 'XLSX', extensions: ['xlsx']}
           ]
         })
         if (savePath) {
           try {
-            this.defaultPathDir = parse(savePath).dir
             writeFileSync(savePath, '') // Try-catch hack because wb.write() does not throw an error
             wb.write(savePath)
             this.$snackbar.open({
@@ -235,7 +232,7 @@
               duration: 10 * 1000,
               queue: false,
               onAction: () => {
-                shell.openExternal(this.defaultPathDir)
+                shell.openExternal(parse(savePath).dir)
               }
             })
           } catch (e) {
