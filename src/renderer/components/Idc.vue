@@ -1,25 +1,25 @@
 <template>
   <div id="wrapper" class="section">
     <div class="columns">
-      <div class="column is-one-quarter">
+      <div class="column">
         <frequency-table :heading="rat1DlHeading" v-on:data-changed="onDataChange($event, 'rat1Dl')">
         </frequency-table>
       </div>
-      <div class="column is-one-quarter">
+      <div class="column">
         <frequency-table :heading="rat1UlHeading" v-on:data-changed="onDataChange($event, 'rat1Ul')">
         </frequency-table>
       </div>
-      <div class="column is-one-quarter">
+      <div class="column">
         <frequency-table :heading="rat2DlHeading" v-on:data-changed="onDataChange($event, 'rat2Dl')">
         </frequency-table>
       </div>
-      <div class="column is-one-quarter">
+      <div class="column">
         <frequency-table :heading="rat2UlHeading" v-on:data-changed="onDataChange($event, 'rat2Ul')">
         </frequency-table>
       </div>
     </div>
     <div class="columns is-centered">
-      <div class="column is-one-quarter has-text-centered">
+      <div class="column is-one-quarter">
         <b-field position="is-centered">
           <p class="control">
             <span class="button is-static">
@@ -29,7 +29,7 @@
           <b-input type="number" min="2" max="9" v-model="orderHarmonics"></b-input>
         </b-field>
       </div>
-      <div class="column is-one-quarter has-text-centered">
+      <div class="column is-one-quarter">
         <b-field position="is-centered">
           <p class="control">
             <span class="button is-static">
@@ -48,7 +48,7 @@
         <b-loading :active.sync="isWorking" :is-full-page="true"></b-loading>
       </div>
     </div>
-    <div class="columns is-centered">
+    <div class="columns">
       <div class="column">
         <idc-table heading="Harmonic Interference" :data="bandsHarmonics">
         </idc-table>
