@@ -79,21 +79,16 @@
     style: 'thin',
     color: '#000000'
   }
-  let xlStyleBorderLeftTop = {
+  let xlStyleBorderHat = {
     border: {
       left: xlStyleBorderThinBlack,
-      top: xlStyleBorderThinBlack
+      top: xlStyleBorderThinBlack,
+      right: xlStyleBorderThinBlack
     }
   }
   let xlStyleBorderTop = {
     border: {
       top: xlStyleBorderThinBlack
-    }
-  }
-  let xlStyleBorderTopRight = {
-    border: {
-      top: xlStyleBorderThinBlack,
-      right: xlStyleBorderThinBlack
     }
   }
   let xlStyleBorderLeft = {
@@ -160,9 +155,7 @@
       insertFreqTable (freqs, heading, ws, rowStart, colStart) {
         let row = rowStart
         let col = colStart
-        ws.cell(row, col++).string(heading).style(xlStyleBorderLeftTop)
-        ws.cell(row, col++).style(xlStyleBorderTop)
-        ws.cell(row, col++).style(xlStyleBorderTopRight)
+        ws.cell(row, col, row, col + 2, true).string(heading).style(xlStyleBorderHat)
         row++
         col = colStart
         ws.cell(row, col++).string('Name').style(xlStyleBorderLeft)
@@ -184,11 +177,7 @@
       insertIdcFreqTable (freqs, heading, ws, rowStart, colStart) {
         let row = rowStart
         let col = colStart
-        ws.cell(row, col++).string(heading).style(xlStyleBorderLeftTop)
-        ws.cell(row, col++).style(xlStyleBorderTop)
-        ws.cell(row, col++).style(xlStyleBorderTop)
-        ws.cell(row, col++).style(xlStyleBorderTop)
-        ws.cell(row, col++).style(xlStyleBorderTopRight)
+        ws.cell(row, col, row, col + 4, true).string(heading).style(xlStyleBorderHat)
         row++
         col = colStart
         ws.cell(row, col++).string('Order').style(xlStyleBorderLeft)
