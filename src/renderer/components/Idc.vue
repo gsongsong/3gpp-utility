@@ -2,20 +2,48 @@
   <div id="wrapper" class="section">
     <div class="columns">
       <div class="column">
-        <frequency-table :heading="rat1DlHeading" v-on:data-changed="onDataChange($event, 'rat1Dl')">
-        </frequency-table>
+        <div class="panel">
+          <div class="panel-heading">
+            <span v-if="!isEditingRat1" v-on:click="isEditingRat1 = true">
+              {{ rat1 }}
+            </span>
+            <b-input v-model="rat1" v-if="isEditingRat1" v-on:blur="isEditingRat1 = false"></b-input>
+          </div>
+          <div class="panel-block">
+            <div class="columns">
+              <div class="column">
+                <frequency-table heading="Downlink" v-on:data-changed="onDataChange($event, 'rat1Dl')">
+                </frequency-table>
+              </div>
+              <div class="column">
+                <frequency-table heading="Uplink" v-on:data-changed="onDataChange($event, 'rat1Ul')">
+                </frequency-table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
       <div class="column">
-        <frequency-table :heading="rat1UlHeading" v-on:data-changed="onDataChange($event, 'rat1Ul')">
-        </frequency-table>
-      </div>
-      <div class="column">
-        <frequency-table :heading="rat2DlHeading" v-on:data-changed="onDataChange($event, 'rat2Dl')">
-        </frequency-table>
-      </div>
-      <div class="column">
-        <frequency-table :heading="rat2UlHeading" v-on:data-changed="onDataChange($event, 'rat2Ul')">
-        </frequency-table>
+        <div class="panel">
+          <div class="panel-heading">
+            <span v-if="!isEditingRat2" v-on:click="isEditingRat2 = true">
+              {{ rat2 }}
+            </span>
+            <b-input v-model="rat2" v-if="isEditingRat2" v-on:blur="isEditingRat2 = false"></b-input>
+          </div>
+          <div class="panel-block">
+            <div class="columns">
+              <div class="column">
+                <frequency-table heading="Downlink" v-on:data-changed="onDataChange($event, 'rat2Dl')">
+                </frequency-table>
+              </div>
+              <div class="column">
+                <frequency-table heading="Uplink" v-on:data-changed="onDataChange($event, 'rat2Ul')">
+                </frequency-table>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
     </div>
     <div class="columns is-centered">
@@ -106,10 +134,10 @@
     components: { FrequencyTable, IdcTable },
     data () {
       return {
-        rat1DlHeading: 'RAT 1 Downlink',
-        rat1UlHeading: 'RAT 1 Uplink',
-        rat2DlHeading: 'RAT 2 Downlink',
-        rat2UlHeading: 'RAT 2 Uplink',
+        rat1: 'RAT 1',
+        rat2: 'RAT 2',
+        isEditingRat1: false,
+        isEditingRat2: false,
         rat1Dl: [],
         rat1Ul: [],
         rat2Dl: [],
@@ -208,10 +236,10 @@
         this.isWorking = true
         let wb = new xl.Workbook()
         let ws = wb.addWorksheet('Sheet 1')
-        this.insertFreqTable(this.rat1Dl, this.rat1DlHeading, ws, 2, 3)
-        this.insertFreqTable(this.rat1Ul, this.rat1UlHeading, ws, 2, 7)
-        this.insertFreqTable(this.rat2Dl, this.rat2DlHeading, ws, 2, 11)
-        this.insertFreqTable(this.rat2Ul, this.rat2UlHeading, ws, 2, 15)
+        this.insertFreqTable(this.rat1Dl, this.rat1 + ' Downlink', ws, 2, 3)
+        this.insertFreqTable(this.rat1Ul, this.rat1 + ' Uplink', ws, 2, 7)
+        this.insertFreqTable(this.rat2Dl, this.rat2 + ' Downlink', ws, 2, 11)
+        this.insertFreqTable(this.rat2Ul, this.rat2 + ' Uplink', ws, 2, 15)
         let maxNumFreqs = Math.max(this.rat1Dl.length, this.rat1Ul.length, this.rat2Dl.length, this.rat2Ul.length)
         this.insertIdcFreqTable(this.bandsHarmonics, 'Harmonic Interference', ws, maxNumFreqs + 5, 2)
         this.insertIdcFreqTable(this.bandsImd, 'IMD Interference', ws, maxNumFreqs + 5, 10)
