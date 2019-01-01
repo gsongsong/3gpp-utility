@@ -68,13 +68,6 @@
     style: 'thin',
     color: '#000000'
   }
-  let xlStyleBorderHat = {
-    border: {
-      left: xlStyleBorderThinBlack,
-      top: xlStyleBorderThinBlack,
-      right: xlStyleBorderThinBlack
-    }
-  }
   let xlStyleBorderTop = {
     border: {
       top: xlStyleBorderThinBlack
@@ -83,11 +76,6 @@
   let xlStyleBorderLeft = {
     border: {
       left: xlStyleBorderThinBlack
-    }
-  }
-  let xlStyleBorderRight = {
-    border: {
-      right: xlStyleBorderThinBlack
     }
   }
 
@@ -134,55 +122,57 @@
       onDataChange: function (data, freqTableName) {
         this[freqTableName] = data
       },
-      insertFreqTable (freqs, heading, ws, rowStart, colStart) {
-        let row = rowStart
-        let col = colStart
-        ws.cell(row, col, row, col + 2, true).string(heading).style(xlStyleBorderHat)
-        row++
-        col = colStart
-        ws.cell(row, col++).string('Name').style(xlStyleBorderLeft)
-        ws.cell(row, col++).string('Freq Low')
-        ws.cell(row, col++).string('Freq High').style(xlStyleBorderRight)
-        for (let freq of freqs) {
-          row++
-          col = colStart
-          ws.cell(row, col++).string(freq.name).style(xlStyleBorderLeft)
-          ws.cell(row, col++).number(freq.fLow)
-          ws.cell(row, col++).number(freq.fHigh).style(xlStyleBorderRight)
-        }
-        row++
-        col = colStart
-        ws.cell(row, col++).style(xlStyleBorderTop)
-        ws.cell(row, col++).style(xlStyleBorderTop)
-        ws.cell(row, col++).style(xlStyleBorderTop)
+      drawTableBorder (ws, rowStart, colStart, numRows, numCols) {
+        ws.cell(rowStart, colStart, rowStart, colStart + numCols - 1).style(xlStyleBorderTop)
+        ws.cell(rowStart, colStart, rowStart + numRows + 1, colStart).style(xlStyleBorderLeft)
+        ws.cell(rowStart + numRows + 2, colStart, rowStart + numRows + 2, colStart + numCols - 1).style(xlStyleBorderTop)
+        ws.cell(rowStart, colStart + numCols, rowStart + numRows + 1, colStart + numCols).style(xlStyleBorderLeft)
       },
-      insertIdcFreqTable (freqs, heading, ws, rowStart, colStart) {
+      insertFreqTable (freqs, heading, ws, rowStart, colStart) {
+        this.drawTableBorder(ws, rowStart, colStart, freqs.length, 3)
+
         let row = rowStart
         let col = colStart
-        ws.cell(row, col, row, col + 4, true).string(heading).style(xlStyleBorderHat)
+        ws.cell(row, col, row, col + 2, true).string(heading)
+
         row++
         col = colStart
-        ws.cell(row, col++).string('Order').style(xlStyleBorderLeft)
         ws.cell(row, col++).string('Name')
         ws.cell(row, col++).string('Freq Low')
         ws.cell(row, col++).string('Freq High')
-        ws.cell(row, col++).string('Victim').style(xlStyleBorderRight)
+
         for (let freq of freqs) {
           row++
           col = colStart
-          ws.cell(row, col++).number(freq.order).style(xlStyleBorderLeft)
           ws.cell(row, col++).string(freq.name)
           ws.cell(row, col++).number(freq.fLow)
           ws.cell(row, col++).number(freq.fHigh)
-          ws.cell(row, col++).string(freq.victim).style(xlStyleBorderRight)
         }
+      },
+      insertIdcFreqTable (freqs, heading, ws, rowStart, colStart) {
+        this.drawTableBorder(ws, rowStart, colStart, freqs.length, 5)
+
+        let row = rowStart
+        let col = colStart
+        ws.cell(row, col, row, col + 4, true).string(heading)
+
         row++
         col = colStart
-        ws.cell(row, col++).style(xlStyleBorderTop)
-        ws.cell(row, col++).style(xlStyleBorderTop)
-        ws.cell(row, col++).style(xlStyleBorderTop)
-        ws.cell(row, col++).style(xlStyleBorderTop)
-        ws.cell(row, col++).style(xlStyleBorderTop)
+        ws.cell(row, col++).string('Order')
+        ws.cell(row, col++).string('Name')
+        ws.cell(row, col++).string('Freq Low')
+        ws.cell(row, col++).string('Freq High')
+        ws.cell(row, col++).string('Victim')
+
+        for (let freq of freqs) {
+          row++
+          col = colStart
+          ws.cell(row, col++).number(freq.order)
+          ws.cell(row, col++).string(freq.name)
+          ws.cell(row, col++).number(freq.fLow)
+          ws.cell(row, col++).number(freq.fHigh)
+          ws.cell(row, col++).string(freq.victim)
+        }
       },
       save: function () {
         if (!this.bandsHarmonics.length && !this.bandsImd.length) {
