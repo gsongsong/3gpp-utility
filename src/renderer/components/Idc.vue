@@ -2,48 +2,10 @@
   <div id="wrapper" class="section">
     <div class="columns">
       <div class="column">
-        <div class="panel">
-          <div class="panel-heading">
-            <span v-if="!isEditingRat1" v-on:click="isEditingRat1 = true">
-              {{ rat1 }}
-            </span>
-            <b-input v-model="rat1" v-if="isEditingRat1" v-on:blur="isEditingRat1 = false"></b-input>
-          </div>
-          <div class="panel-block">
-            <div class="columns">
-              <div class="column">
-                <frequency-table heading="Downlink" v-on:data-changed="onDataChange($event, 'rat1Dl')">
-                </frequency-table>
-              </div>
-              <div class="column">
-                <frequency-table heading="Uplink" v-on:data-changed="onDataChange($event, 'rat1Ul')">
-                </frequency-table>
-              </div>
-            </div>
-          </div>
-        </div>
+        <band-panel ratName="RAT 1" v-on:data-changed="onDataChange($event, 'rat1')"></band-panel> 
       </div>
       <div class="column">
-        <div class="panel">
-          <div class="panel-heading">
-            <span v-if="!isEditingRat2" v-on:click="isEditingRat2 = true">
-              {{ rat2 }}
-            </span>
-            <b-input v-model="rat2" v-if="isEditingRat2" v-on:blur="isEditingRat2 = false"></b-input>
-          </div>
-          <div class="panel-block">
-            <div class="columns">
-              <div class="column">
-                <frequency-table heading="Downlink" v-on:data-changed="onDataChange($event, 'rat2Dl')">
-                </frequency-table>
-              </div>
-              <div class="column">
-                <frequency-table heading="Uplink" v-on:data-changed="onDataChange($event, 'rat2Ul')">
-                </frequency-table>
-              </div>
-            </div>
-          </div>
-        </div>
+        <band-panel ratName="RAT 2" v-on:data-changed="onDataChange($event, 'rat2')"></band-panel>
       </div>
     </div>
     <div class="columns is-centered">
@@ -100,7 +62,7 @@
   import { ipcRenderer, remote, shell } from 'electron'
   import * as xl from 'excel4node'
 
-  import FrequencyTable from './FrequencyTable'
+  import BandPanel from './BandPanel'
   import IdcTable from './IdcTable'
 
   let xlStyleBorderThinBlack = {
@@ -131,17 +93,11 @@
   }
 
   export default {
-    components: { FrequencyTable, IdcTable },
+    components: { BandPanel, IdcTable },
     data () {
       return {
-        rat1: 'RAT 1',
-        rat2: 'RAT 2',
-        isEditingRat1: false,
-        isEditingRat2: false,
-        rat1Dl: [],
-        rat1Ul: [],
-        rat2Dl: [],
-        rat2Ul: [],
+        rat1: {ratName: '', downlink: [], uplink: []},
+        rat2: {ratName: '', downlink: [], uplink: []},
         orderHarmonics: 2,
         orderImd: 2,
         isWorking: false,
@@ -168,10 +124,10 @@
       calculate: function () {
         this.isWorking = true
         ipcRenderer.send('idc-request', JSON.stringify({
-          rat1Dl: this.rat1Dl,
-          rat1Ul: this.rat1Ul,
-          rat2Dl: this.rat2Dl,
-          rat2Ul: this.rat2Ul,
+          rat1Dl: this.rat1.downlink,
+          rat1Ul: this.rat1.uplink,
+          rat2Dl: this.rat2.downlink,
+          rat2Ul: this.rat2.uplink,
           orderHarmonics: this.orderHarmonics,
           orderImd: this.orderImd
         }))
@@ -236,11 +192,14 @@
         this.isWorking = true
         let wb = new xl.Workbook()
         let ws = wb.addWorksheet('Sheet 1')
-        this.insertFreqTable(this.rat1Dl, this.rat1 + ' Downlink', ws, 2, 3)
-        this.insertFreqTable(this.rat1Ul, this.rat1 + ' Uplink', ws, 2, 7)
-        this.insertFreqTable(this.rat2Dl, this.rat2 + ' Downlink', ws, 2, 11)
-        this.insertFreqTable(this.rat2Ul, this.rat2 + ' Uplink', ws, 2, 15)
-        let maxNumFreqs = Math.max(this.rat1Dl.length, this.rat1Ul.length, this.rat2Dl.length, this.rat2Ul.length)
+        this.insertFreqTable(this.rat1.downlink, `${this.rat1.ratName} Downlink`, ws, 2, 3)
+        this.insertFreqTable(this.rat1.uplink, `${this.rat1.ratName} Uplink`, ws, 2, 7)
+        this.insertFreqTable(this.rat2.downlink, `${this.rat2.ratName} Downlink`, ws, 2, 11)
+        this.insertFreqTable(this.rat2.uplink, `${this.rat2.ratName} Uplink`, ws, 2, 15)
+        let maxNumFreqs = Math.max(
+          this.rat1.downlink.length, this.rat1.uplink.length,
+          this.rat2.downlink.length, this.rat2.uplink.length
+        )
         this.insertIdcFreqTable(this.bandsHarmonics, 'Harmonic Interference', ws, maxNumFreqs + 5, 2)
         this.insertIdcFreqTable(this.bandsImd, 'IMD Interference', ws, maxNumFreqs + 5, 10)
         let savePath = remote.dialog.showSaveDialog({
