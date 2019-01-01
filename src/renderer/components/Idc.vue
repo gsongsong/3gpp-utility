@@ -57,7 +57,6 @@
 </template>
 
 <script>
-  import { writeFileSync } from 'fs'
   import { parse } from 'path'
   import { ipcRenderer, remote, shell } from 'electron'
   import * as xl from 'excel4node'
@@ -208,10 +207,20 @@
           ]
         })
         if (savePath) {
-          try {
-            writeFileSync(savePath, '') // Try-catch hack because wb.write() does not throw an error
-            wb.write(savePath)
-            this.$snackbar.open({
+          let vue = this
+          wb.write(savePath, function (err, stats) {
+            if (err) {
+              vue.$snackbar.open({
+                message: err,
+                type: 'is-warning',
+                position: 'is-bottom-right',
+                actionText: 'Dismiss',
+                indefinite: true,
+                queue: false
+              })
+              return
+            }
+            vue.$snackbar.open({
               message: 'Formatting success',
               type: 'is-success',
               position: 'is-bottom-right',
@@ -222,16 +231,7 @@
                 shell.openExternal(parse(savePath).dir)
               }
             })
-          } catch (e) {
-            this.$snackbar.open({
-              message: e,
-              type: 'is-warning',
-              position: 'is-bottom-right',
-              actionText: 'Dismiss',
-              indefinite: true,
-              queue: false
-            })
-          }
+          })
         } else {
           this.$snackbar.open({
             message: 'Save aborted',
