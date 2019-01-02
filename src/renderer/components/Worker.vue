@@ -81,6 +81,17 @@
         }
         event.sender.send('idc-response', JSON.stringify(result))
       })
+      ipcRenderer.on('diff-request', (event, data) => {
+        let { fileOld, fileNew } = JSON.parse(data)
+        console.log(fileOld)
+        console.log(fileNew)
+        event.sender.send('diff-response', JSON.stringify({
+          untouhced: [/*msgName*/],
+          removed: [/*msgName*/],
+          added: [/*msgName*/],
+          modified: {/*msgName: diffResult*/}
+        }))
+      })
     }
   }
 </script>

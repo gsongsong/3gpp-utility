@@ -29,9 +29,9 @@
       </span>
     </b-field>
     <b-tooltip label="RRC Protocol only" position="is-right" type="is-info">
-      <button class="button is-success" :disabled="!fileOld || !fileNew ||
-                                                  specTypeOld !== 'RRC Protocol' ||
-                                                  specTypeNew !== 'RRC Protocol'">
+      <button class="button is-success" v-on:click="diff()"
+              :disabled="!fileOld || !fileNew || specTypeOld !== 'RRC Protocol' ||
+                         specTypeNew !== 'RRC Protocol'">
         Diff
       </button>
     </b-tooltip>
@@ -39,6 +39,8 @@
 </template>
 
 <script>
+  import { ipcRenderer } from 'electron'
+
   export default {
     data () {
       return {
@@ -66,6 +68,12 @@
         if (indexAp >= 0 && (indexRrc === -1 || (indexRrc >= 0 && indexAp < indexRrc))) {
           this[fileKey] = 'Application Protocol'
         }
+      },
+      diff () {
+        ipcRenderer.send('diff-request', JSON.stringify({
+          fileOld: this.fileOld,
+          fileNew: this.fileNew
+        }))
       }
     }
   }
