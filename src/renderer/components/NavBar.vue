@@ -13,7 +13,7 @@
       <div class="navbar-start">
         <router-link to="/" class="navbar-item">Home</router-link>
         <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link">ASN.1</a>
+          <a class="navbar-link">Message/IE</a>
 
           <div class="navbar-dropdown">
             <router-link to="/formatter" class="navbar-item">Formatter</router-link>
