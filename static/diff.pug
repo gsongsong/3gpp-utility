@@ -1,0 +1,65 @@
+doctype html
+html
+  head
+    meta(charset="UTF-8")
+    title Diff #{nameOld} - #{nameNew}
+    style
+     include ../node_modules/bulma/css/bulma.min.css
+     include ../node_modules/diff2html/dist/diff2html.min.css
+    style.
+      .border-danger  {border: solid 1px hsl(348, 100%, 61%);}
+      .border-success {border: solid 1px hsl(141, 71%, 48%);}
+      .border-warning {border: solid 1px hsl(48, 100%, 67%);}
+      .border-info    {border: solid 1px hsl(204, 86%, 53%);}
+      .border-grey    {border: solid 1px hsl(0, 0%, 48%);}
+    script
+      include ../node_modules/diff2html/dist/diff2html.min.js
+  body
+    div(class="section")
+      div(class="columns")
+        div(class="column has-text-centered border-danger")
+          h2(class="subtitle has-text-danger") #{nameOld}
+        div(class="column has-text-centered border-success")
+          h2(class="subtitle has-text-success") #{nameNew}
+
+      h1(class="title") Modified
+      h2(class="subtitle" id="summary") Summary
+      div(class="columns")
+        div(class="column border-info")
+          ul
+            each item in listModified
+              li
+                a(href="#" + item.name) #{item.name}
+      h2(class="subtitle") Details
+      div(class="columns")
+        div(class="column border-info")
+          each item in listModified
+            h3(class="subtitle" id=item.name) #{item.name}
+              | &nbsp;
+              span(class="tag")
+                a(href="#summary") Back to summary
+            div(id="div" + item.name)
+
+      h1(class="title") Removed & Added
+      div(class="columns")
+        div(class="column has-text-centered border-danger")
+          h2(class="subtitle has-text-danger") Removed
+          div(class="has-text-left")
+            ul
+              each item in listRemoved
+                li= item.name
+        div(class="column has-text-centered border-success")
+          h2(class="subtitle has-text-success") Added
+          div(class="has-text-left")
+            ul
+              each item in listAdded
+                li= item.name
+
+      h1(class="title") Untouched
+      div(class="columns")
+        div(class="column border-grey")
+    script
+      | var diff2html = {};
+      each item in listModified
+        | diff2html["#{item.name}"] = Diff2Html.getPrettyHtml("#{item.patch.replace(/\\/g, '\\\\').replace(/\n/g, '\\n')}", {inputFormat: 'diff', showFiles: false, matching: 'lines', outputFormat: 'line-by-line'});
+        | document.getElementById("div#{item.name}").innerHTML = diff2html["#{item.name}"];

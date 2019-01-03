@@ -35,11 +35,14 @@
         Diff
       </button>
     </b-tooltip>
+    <b-loading :active.sync="isWorking" :is-full-page="true"></b-loading>
   </div>
 </template>
 
 <script>
-  import { ipcRenderer } from 'electron'
+  import { writeFileSync } from 'fs'
+  import { parse } from 'path'
+  import { ipcRenderer, remote, shell } from 'electron'
 
   export default {
     data () {
@@ -47,7 +50,8 @@
         fileOld: null,
         fileNew: null,
         specTypeOld: 'Unknown',
-        specTypeNew: 'Unknown'
+        specTypeNew: 'Unknown',
+        isWorking: false
       }
     },
     methods: {
@@ -70,6 +74,7 @@
         }
       },
       diff () {
+        this.isWorking = true
         ipcRenderer.send('diff-request', JSON.stringify({
           fileOld: this.fileOld.path,
           fileNew: this.fileNew.path
@@ -78,6 +83,56 @@
     },
     mounted () {
       ipcRenderer.on('diff-response', (event, data) => {
+        let result = JSON.parse(data)
+        if (result.error) {
+          this.$snackbar.open({
+            message: result.error,
+            type: 'is-warning',
+            position: 'is-bottom-right',
+            actionText: 'Dismiss',
+            indefinite: true,
+            queue: false
+          })
+        } else {
+          let savePath = remote.dialog.showSaveDialog({
+            defaultPath: `${parse(this.fileOld.path).base}_${parse(this.fileNew.path).base}.html`
+          })
+          if (savePath) {
+            try {
+              writeFileSync(savePath, result.render)
+              this.$snackbar.open({
+                message: 'Diff success',
+                type: 'is-success',
+                position: 'is-bottom-right',
+                actionText: 'Open folder',
+                duration: 10 * 1000,
+                queue: false,
+                onAction: () => {
+                  shell.openExternal(parse(savePath).dir)
+                }
+              })
+            } catch (e) {
+              this.$snackbar.open({
+                message: e,
+                type: 'is-warning',
+                position: 'is-bottom-right',
+                actionText: 'Dismiss',
+                indefinite: true,
+                queue: false
+              })
+            }
+          } else {
+            this.$snackbar.open({
+              message: 'Save aborted',
+              type: 'is-warning',
+              position: 'is-bottom-right',
+              actionText: 'Dismiss',
+              duration: 3 * 1000,
+              queue: false
+            })
+          }
+        }
+        this.isWorking = false
       })
     }
   }

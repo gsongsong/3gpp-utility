@@ -4,6 +4,7 @@
 
 <script>
   import { readFileSync } from 'fs'
+  import { parse as parsePath } from 'path'
   import { ipcRenderer } from 'electron'
 
   import * as extractRan2 from 'third-gen-asn1-extractor'
@@ -12,6 +13,7 @@
   import { parse as parseRan3, format as formatRan3 } from 'third-gen-message-formatter-ran3'
 
   import { diffAll as diff } from 'third-gen-message-diff'
+  import * as pug from 'pug'
 
   import { Band, calculateHarmonics, calculateIMD } from 'third-gen-distortion-calculator'
 
@@ -84,9 +86,20 @@
         event.sender.send('idc-response', JSON.stringify(result))
       })
       ipcRenderer.on('diff-request', (event, data) => {
-        let { fileOld, fileNew } = JSON.parse(data)
-        let diffResult = diff(fileOld, fileNew)
-        event.sender.send('diff-response', JSON.stringify(diffResult))
+        let result = {}
+        try {
+          let { fileOld, fileNew } = JSON.parse(data)
+          let diffResult = diff(fileOld, fileNew)
+          result = {
+            render: pug.renderFile('static/diff.pug', Object.assign(diffResult, {
+              nameOld: parsePath(fileOld).base,
+              nameNew: parsePath(fileNew).base
+            }))
+          }
+        } catch (e) {
+          result = {error: e}
+        }
+        event.sender.send('diff-response', JSON.stringify(result))
       })
     }
   }
