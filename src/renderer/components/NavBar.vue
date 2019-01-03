@@ -12,7 +12,14 @@
     <div id="navbar-main" class="navbar-menu">
       <div class="navbar-start">
         <router-link to="/" class="navbar-item">Home</router-link>
-        <router-link to="/formatter" class="navbar-item">Formatter</router-link>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link">Message/IE</a>
+
+          <div class="navbar-dropdown">
+            <router-link to="/formatter" class="navbar-item">Formatter</router-link>
+            <router-link to="/diff" class="navbar-item">Diff</router-link>
+          </div>
+        </div>
         <router-link to="/idc" class="navbar-item">HM/IMD</router-link>
       </div>
     </div>

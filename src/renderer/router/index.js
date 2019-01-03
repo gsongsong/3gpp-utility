@@ -16,6 +16,11 @@ export default new Router({
       component: require('@/components/Formatter').default
     },
     {
+      path: '/diff',
+      name: 'diff',
+      component: require('@/components/Diff').default
+    },
+    {
       path: '/idc',
       name: 'idc',
       component: require('@/components/Idc').default
