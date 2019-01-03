@@ -88,12 +88,13 @@
       ipcRenderer.on('diff-request', (event, data) => {
         let result = {}
         try {
-          let { fileOld, fileNew } = JSON.parse(data)
+          let { fileOld, fileNew, comparisonMode } = JSON.parse(data)
           let diffResult = diff(fileOld, fileNew)
           result = {
             render: pug.renderFile('static/diff.pug', Object.assign(diffResult, {
               nameOld: parsePath(fileOld).base,
-              nameNew: parsePath(fileNew).base
+              nameNew: parsePath(fileNew).base,
+              comparisonMode: comparisonMode
             }))
           }
         } catch (e) {

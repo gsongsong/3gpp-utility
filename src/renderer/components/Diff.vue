@@ -28,6 +28,16 @@
         </b-tag>
       </span>
     </b-field>
+    <b-field label="Comparison mode">
+    </b-field>
+    <b-field>
+      <b-radio-button v-model="comparisonMode" native-value="line-by-line" type="is-success">
+        <span>line-by-line</span>
+      </b-radio-button>
+      <b-radio-button v-model="comparisonMode" native-value="side-by-side" type="is-success">
+        <span>side-by-side</span>
+      </b-radio-button>
+    </b-field>
     <b-tooltip label="RRC Protocol only" position="is-right" type="is-info">
       <button class="button is-success" v-on:click="diff()"
               :disabled="!fileOld || !fileNew || specTypeOld !== 'RRC Protocol' ||
@@ -51,6 +61,7 @@
         fileNew: null,
         specTypeOld: 'Unknown',
         specTypeNew: 'Unknown',
+        comparisonMode: 'line-by-line',
         isWorking: false
       }
     },
@@ -77,7 +88,8 @@
         this.isWorking = true
         ipcRenderer.send('diff-request', JSON.stringify({
           fileOld: this.fileOld.path,
-          fileNew: this.fileNew.path
+          fileNew: this.fileNew.path,
+          comparisonMode: this.comparisonMode
         }))
       }
     },
@@ -95,7 +107,7 @@
           })
         } else {
           let savePath = remote.dialog.showSaveDialog({
-            defaultPath: `${parse(this.fileOld.path).base}_${parse(this.fileNew.path).base}.html`
+            defaultPath: `${parse(this.fileOld.path).base}_${parse(this.fileNew.path).base}_${this.comparisonMode}.html`
           })
           if (savePath) {
             try {
