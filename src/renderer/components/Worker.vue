@@ -11,6 +11,8 @@
   import { format as formatRan2 } from 'third-gen-message-formatter-ran2'
   import { parse as parseRan3, format as formatRan3 } from 'third-gen-message-formatter-ran3'
 
+  import { diffAll as diff } from 'third-gen-message-diff'
+
   import { Band, calculateHarmonics, calculateIMD } from 'third-gen-distortion-calculator'
 
   export default {
@@ -83,14 +85,8 @@
       })
       ipcRenderer.on('diff-request', (event, data) => {
         let { fileOld, fileNew } = JSON.parse(data)
-        console.log(fileOld)
-        console.log(fileNew)
-        event.sender.send('diff-response', JSON.stringify({
-          untouhced: [/*msgName*/],
-          removed: [/*msgName*/],
-          added: [/*msgName*/],
-          modified: {/*msgName: diffResult*/}
-        }))
+        let diffResult = diff(fileOld, fileNew)
+        event.sender.send('diff-response', JSON.stringify(diffResult))
       })
     }
   }

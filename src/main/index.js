@@ -49,11 +49,11 @@ function createWindow () {
   })
 
   ipcMain.on('diff-request', (event, data) => {
-    workerWindow.webContents.send('idc-request', data)
+    workerWindow.webContents.send('diff-request', data)
   })
 
   ipcMain.on('diff-response', (event, data) => {
-    mainWindow.webContents.send('idc-response', data)
+    mainWindow.webContents.send('diff-response', data)
   })
 
   mainWindow.loadURL(winURL)

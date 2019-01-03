@@ -71,10 +71,14 @@
       },
       diff () {
         ipcRenderer.send('diff-request', JSON.stringify({
-          fileOld: this.fileOld,
-          fileNew: this.fileNew
+          fileOld: this.fileOld.path,
+          fileNew: this.fileNew.path
         }))
       }
+    },
+    mounted () {
+      ipcRenderer.on('diff-response', (event, data) => {
+      })
     }
   }
 </script>
