@@ -4,8 +4,8 @@ html
     meta(charset="UTF-8")
     title Diff #{nameOld} - #{nameNew}
     style
-     include ../node_modules/bulma/css/bulma.min.css
-     include ../node_modules/diff2html/dist/diff2html.min.css
+     include bulma.min.css
+     include diff2html.min.css
     style.
       .border-danger  {border: solid 1px hsl(348, 100%, 61%);}
       .border-success {border: solid 1px hsl(141, 71%, 48%);}
@@ -13,7 +13,7 @@ html
       .border-info    {border: solid 1px hsl(204, 86%, 53%);}
       .border-grey    {border: solid 1px hsl(0, 0%, 48%);}
     script
-      include ../node_modules/diff2html/dist/diff2html.min.js
+      include diff2html.min.js
   body
     div(class="section")
       div(class="columns")
