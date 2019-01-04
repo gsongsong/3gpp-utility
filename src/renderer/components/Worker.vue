@@ -102,6 +102,7 @@
         }
         event.sender.send('diff-response', JSON.stringify(result))
       })
+      ipcRenderer.send('worker-ready')
     }
   }
 </script>

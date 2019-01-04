@@ -34,6 +34,10 @@ function createWindow () {
     app.quit()
   })
 
+  ipcMain.on('worker-ready', (event, data) => {
+    mainWindow.loadURL(winURL)
+  })
+
   ipcMain.on('format-request', (event, data) => {
     workerWindow.webContents.send('format-request', data)
   })
@@ -57,8 +61,6 @@ function createWindow () {
   ipcMain.on('diff-response', (event, data) => {
     mainWindow.webContents.send('diff-response', data)
   })
-
-  mainWindow.loadURL(winURL)
 
   mainWindow.on('closed', () => {
     app.quit()
