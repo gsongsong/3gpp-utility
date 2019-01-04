@@ -21,9 +21,11 @@ function createWindow () {
    * Initial window options
    */
   mainWindow = new BrowserWindow({
-    minHeight: 600,
     useContentSize: true,
-    minWidth: 1200
+    width: 1200,
+    minWidth: 1200,
+    height: 600,
+    minHeight: 600
   })
 
   workerWindow = new BrowserWindow({show: process.env.NODE_ENV === 'development'})
