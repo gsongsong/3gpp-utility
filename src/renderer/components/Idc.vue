@@ -236,6 +236,7 @@
       }
     },
     mounted () {
+      ipcRenderer.removeAllListeners('idc-response')
       ipcRenderer.on('idc-response', (event, data) => {
         let result = JSON.parse(data)
         if (result.error) {
