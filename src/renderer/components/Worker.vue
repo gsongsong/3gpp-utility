@@ -4,7 +4,7 @@
 
 <script>
   import { readFileSync } from 'fs'
-  import { parse as parsePath } from 'path'
+  import { join as joinPath, parse as parsePath } from 'path'
   import { ipcRenderer } from 'electron'
 
   import * as extractRan2 from 'third-gen-asn1-extractor'
@@ -91,7 +91,7 @@
           let { fileOld, fileNew, comparisonMode } = JSON.parse(data)
           let diffResult = diff(fileOld, fileNew)
           result = {
-            render: pug.renderFile('static/diff.pug', Object.assign(diffResult, {
+            render: pug.renderFile(joinPath(__static, 'diff.pug'), Object.assign(diffResult, {
               nameOld: parsePath(fileOld).base,
               nameNew: parsePath(fileNew).base,
               comparisonMode: comparisonMode
@@ -102,6 +102,7 @@
         }
         event.sender.send('diff-response', JSON.stringify(result))
       })
+      ipcRenderer.send('worker-ready')
     }
   }
 </script>

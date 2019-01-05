@@ -85,6 +85,7 @@
       }
     },
     mounted () {
+      ipcRenderer.removeAllListeners('format-response')
       ipcRenderer.on('format-response', (event, data) => {
         let result = JSON.parse(data)
         if (result.error) {

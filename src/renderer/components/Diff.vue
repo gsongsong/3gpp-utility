@@ -94,6 +94,7 @@
       }
     },
     mounted () {
+      ipcRenderer.removeAllListeners('diff-response')
       ipcRenderer.on('diff-response', (event, data) => {
         let result = JSON.parse(data)
         if (result.error) {
