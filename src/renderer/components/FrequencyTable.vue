@@ -1,9 +1,11 @@
 <template>
-  <div class="panel">
-    <div class="panel-heading">
-      {{ heading }}
+  <div class="card">
+    <div class="card-header">
+      <p class="card-header-title">
+        {{ heading }}
+      </p>
     </div>
-    <div class="panel-block">
+    <div class="card-contet">
       <b-table class="table is-fullwidth" :data="data" striped narrowed hoverable>
         <template slot-scope="props">
           <b-table-column field="name" label="Name">
