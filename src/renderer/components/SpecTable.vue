@@ -14,7 +14,10 @@
           <b-table-column field="fileName" label="File name">
             <a v-on:click="open(props.row.url)" class="has-text-success">{{ props.row.name }}</a>
           </b-table-column>
-          <b-table-column field="date" label="Date">
+          <b-table-column field="version" label="Version" centered>
+            {{ `${props.row.version[0]}.${props.row.version[1]}.${props.row.version[2]}` }}
+          </b-table-column>
+          <b-table-column field="date" label="Date" centered>
             {{ `${props.row.date.getFullYear()}-${props.row.date.getMonth()}-${props.row.date.getDate()}` }}
           </b-table-column>
         </template>
@@ -55,11 +58,15 @@
         if (err) {
           return
         }
-        list.reverse()
-        // TODO: version aware sorting
-        // list.sort((a, b) => {
-        //   return b.date - a.date
-        // })
+        list.sort((a, b) => {
+          if (a.version[0] === b.version[0]) {
+            if (a.version[1] === b.version[1]) {
+              return b.version[2] - a.version[2]
+            }
+            return b.version[1] - a.version[1]
+          }
+          return b.version[0] - a.version[0]
+        })
         this.data = list.slice(0, 3)
       })
     }

@@ -10,7 +10,7 @@
       </b-field>
     </div>
     <div id="specWatchListWrapper" class="section columns">
-      <div v-for="item in items" v-bind:key="item" class="column is-one-quarter">
+      <div v-for="item in items" v-bind:key="item" class="column is-one-third">
         <spec-table :heading="item" v-on:remove="remove($event)"></spec-table>
       </div>
     </div>
