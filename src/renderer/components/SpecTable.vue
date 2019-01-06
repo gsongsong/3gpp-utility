@@ -1,51 +1,59 @@
 <template>
   <div class="panel">
     <div class="panel-heading">
-      <span v-if="heading">
         {{ heading }}
-      </span>
-      <b-field v-if="!heading">
-        <b-input placeholder="Spec number"></b-input>
-        <p class="control">
-          <button class="button is-success">✚</button>
-        </p>
-      </b-field>
     </div>
-    <div class="panel-block">
-      <b-table :data="block" v-if="heading" striped narrowed hoverable>
+    <div class="panel-block" style="position: relative;">
+      <b-table class="table is-fullwidth" :data="data" striped narrowed hoverable>
         <template slot-scope="props">
           <b-table-column field="fileName" label="File name">
-            {{ props.row.name }}
+            <a v-on:click="open(props.row.url)">{{ props.row.name }}</a>
           </b-table-column>
-          <b-table-column field="fileName" label="Date">
-            {{ props.row.date }}
+          <b-table-column field="date" label="Date">
+            {{ `${props.row.date.getFullYear()}-${props.row.date.getMonth()}-${props.row.date.getDate()}` }}
           </b-table-column>
         </template>
       </b-table>
-      <span v-if="!heading">
-        Add spec number of interest
-      </span>
+      <b-loading :active.sync="isWorking" :is-full-page="false"></b-loading>
     </div>
   </div>
 </template>
 
 <script>
+  import { shell } from 'electron'
+  import { GetList } from 'third-gen-spec-list'
+
   export default {
     props: {
       heading: {
         type: String,
         default: ''
-      },
-      block: {
-        type: Array,
-        default: []
       }
     },
     data () {
       return {
+        data: [],
+        isWorking: true
       }
     },
     methods: {
+      open: function (url) {
+        shell.openExternal(url)
+      }
+    },
+    mounted () {
+      GetList(this.heading, (err, list) => {
+        this.isWorking = false
+        if (err) {
+          return
+        }
+        list.reverse()
+        // TODO: version aware sorting
+        // list.sort((a, b) => {
+        //   return b.date - a.date
+        // })
+        this.data = list.slice(0, 3)
+      })
     }
   }
 </script>

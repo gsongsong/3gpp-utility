@@ -1,7 +1,18 @@
 <template>
-  <div id="specWatchDogWrapper" class="section columns">
-    <div v-for="item in Object.keys(items)" v-bind:key="item" class="column is-one-quarter">
-      <spec-table :heading="item" :block="items[item]"></spec-table>
+  <div>
+    <div class="section">
+      <b-field label="Add to watch list"></b-field>
+      <b-field>
+        <b-input placeholder="Spec number"></b-input>
+        <p class="control">
+          <button class="button is-success">✚</button>
+        </p>
+      </b-field>
+    </div>
+    <div id="specWatchListWrapper" class="section columns">
+      <div v-for="item in items" v-bind:key="item" class="column is-one-quarter">
+        <spec-table :heading="item"></spec-table>
+      </div>
     </div>
   </div>
 </template>
@@ -14,19 +25,14 @@ export default {
     components: { SpecTable },
     data () {
       return {
-        items: {
-          '36.331': [
-            {name: '36331-f00.zip', type: '-', size: 0, date: '0000-00-00', url: 'http'}
-          ],
-          '': []
-        }
+        items: ['36.331']
       }
     }
   }
 </script>
 
 <style>
-  #specWatchDogWrapper {
+  #specWatchListWrapper {
     display: flex;
     flex-wrap: wrap;
   }
