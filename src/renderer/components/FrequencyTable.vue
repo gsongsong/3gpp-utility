@@ -26,7 +26,7 @@
           </b-table-column>
         </template>
         <template slot="footer">
-          <div class="has-text-right">
+          <div class="has-text-right has-text-grey">
             Frequency in MHz
           </div>
         </template>
