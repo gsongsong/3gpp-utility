@@ -18,6 +18,8 @@
 </template>
 
 <script>
+  import { readFileSync } from 'fs'
+  import { ipcRenderer } from 'electron'
   import SpecTable from './SpecTable'
 
 export default {
@@ -26,7 +28,8 @@ export default {
     data () {
       return {
         specNumber: '',
-        items: ['36.331']
+        items: [],
+        watchListFilePath: ''
       }
     },
     methods: {
@@ -45,6 +48,14 @@ export default {
         }
         this.items.splice(idx, 1)
       }
+    },
+    mounted () {
+      ipcRenderer.removeAllListeners('specWatchDog-filePath')
+      ipcRenderer.on('specWatchDog-filePath', (event, data) => {
+        this.watchListFilePath = JSON.parse(data)
+        this.items = JSON.parse(readFileSync(this.watchListFilePath, 'utf8'))
+      })
+      ipcRenderer.send('specWatchDog-ready')
     }
   }
 </script>

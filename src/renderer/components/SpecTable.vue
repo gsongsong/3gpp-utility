@@ -18,8 +18,13 @@
             {{ `${props.row.version[0]}.${props.row.version[1]}.${props.row.version[2]}` }}
           </b-table-column>
           <b-table-column field="date" label="Date" centered>
-            {{ `${props.row.date.getFullYear()}-${props.row.date.getMonth()}-${props.row.date.getDate()}` }}
+            {{ `${props.row.date.getFullYear()}-${props.row.date.getMonth() + 1}-${props.row.date.getDate()}` }}
           </b-table-column>
+        </template>
+        <template slot="footer">
+          <div class="has-text-right has-text-grey">
+            Last update: {{ `${lastUpdate.getFullYear()}-${lastUpdate.getMonth() + 1}-${lastUpdate.getDate()}` }}
+          </div>
         </template>
       </b-table>
       <b-loading :active.sync="isWorking" :is-full-page="false"></b-loading>
@@ -36,11 +41,18 @@
       heading: {
         type: String,
         default: ''
+      },
+      data: {
+        type: Array,
+        default: ''
+      },
+      lastUpdate: {
+        type: Date,
+        default: new Date()
       }
     },
     data () {
       return {
-        data: [],
         isWorking: true
       }
     },
