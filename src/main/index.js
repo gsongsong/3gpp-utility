@@ -48,7 +48,7 @@ function createWindow () {
     }
     let specWatchListFilePath = join(appDir, 'specWatchList.json')
     if (!existsSync(specWatchListFilePath)) {
-      writeFileSync(specWatchListFilePath, JSON.stringify([]))
+      writeFileSync(specWatchListFilePath, JSON.stringify({}))
     }
     event.sender.send('specWatchDog-filePath', JSON.stringify(specWatchListFilePath))
   })
