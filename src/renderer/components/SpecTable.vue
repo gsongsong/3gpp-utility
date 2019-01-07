@@ -5,7 +5,10 @@
         {{ heading }}
       </p>
       <p class="card-header-icon">
-        <a v-on:click="emitRemove(heading)" class="has-text-danger">🞬</a>
+        <a v-on:click="getList()" class="has-text-success">⟳</a>
+      </p>
+      <p class="card-header-icon">
+        <a v-on:click="emitRemove()" class="has-text-danger">🞬</a>
       </p>
     </div>
     <p class="card-content" style="position: relative;">
@@ -27,8 +30,8 @@
           </div>
         </template>
       </b-table>
-      <b-loading :active.sync="isWorking" :is-full-page="false"></b-loading>
     </p>
+    <b-loading :active.sync="isWorking" :is-full-page="false"></b-loading>
   </div>
 </template>
 
@@ -53,17 +56,18 @@
     },
     data () {
       return {
-        isWorking: true
+        isWorking: false
       }
     },
     methods: {
-      emitRemove: function (specNumber) {
-        this.$emit('remove', this.heading)
+      emitRemove: function () {
+        this.$emit('remove')
       },
       open: function (url) {
         shell.openExternal(url)
       },
       getList: function () {
+        this.isWorking = true
         GetList(this.heading, (err, list) => {
           this.isWorking = false
           if (err) {

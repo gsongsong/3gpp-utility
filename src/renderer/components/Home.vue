@@ -12,7 +12,7 @@
     <div id="specWatchListWrapper" class="section columns">
       <div v-for="(sn, idx) in specNumbers" v-bind:key="sn" class="column is-one-third">
         <spec-table :heading="sn" :data="specLists[idx]" :lastUpdate="new Date(lastUpdates[idx])"
-          v-on:spec-list-changed="update($event, sn)" v-on:remove="remove($event)"></spec-table>
+          v-on:spec-list-changed="update($event, sn)" v-on:remove="remove(sn)"></spec-table>
       </div>
     </div>
   </div>
