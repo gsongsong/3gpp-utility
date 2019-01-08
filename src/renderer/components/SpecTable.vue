@@ -5,7 +5,7 @@
         {{ heading }}
       </p>
       <p class="card-header-icon">
-        <a v-on:click="getList()" class="has-text-success">⟳</a>
+        <a v-on:click="getList(true)" class="has-text-success">⟳</a>
       </p>
       <p class="card-header-icon">
         <a v-on:click="emitRemove()" class="has-text-danger">🞬</a>
@@ -66,8 +66,13 @@
       open: function (url) {
         shell.openExternal(url)
       },
-      getList: function () {
+      getList: function (forced = false) {
         this.isWorking = true
+        let timeDiffMs = new Date().getTime() - new Date(this.lastUpdate).getTime()
+        if (timeDiffMs / 1000 / 60 / 60 / 24 < 7 && !forced) {
+          this.isWorking = false
+          return
+        }
         GetList(this.heading, (err, list) => {
           this.isWorking = false
           if (err) {
