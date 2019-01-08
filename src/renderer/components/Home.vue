@@ -10,8 +10,8 @@
       </b-field>
     </div>
     <div id="specWatchListWrapper" class="section columns">
-      <div v-for="(sn, idx) in specNumbers" v-bind:key="sn" class="column is-one-third">
-        <spec-table :heading="sn" :data="specLists[idx]" :lastUpdate="new Date(lastUpdates[idx])"
+      <div v-for="(data, sn) in watchList" v-bind:key="sn" class="column is-one-third">
+        <spec-table :heading="sn" :data="data.files" :lastUpdate="new Date(data.lastUpdate)"
           v-on:spec-list-changed="update($event, sn)" v-on:remove="remove(sn)"></spec-table>
       </div>
     </div>
@@ -30,53 +30,35 @@ export default {
       return {
         specNumber: '',
         watchListFilePath: '',
-        specNumbers: [],
-        specLists: [],
-        lastUpdates: []
+        watchList: {}
       }
     },
     methods: {
       add: function (specNumber) {
-        if (this.specNumbers.includes(specNumber)) {
+        if (this.watchList[specNumber]) {
           return
         }
-        this.specNumbers.push(specNumber)
-        this.specLists.push([])
-        this.lastUpdates.push(null)
+        this.$set(this.watchList, specNumber, {
+          files: [],
+          lastUpdate: null
+        })
+        this.specNumber = ''
       },
       update: function (data, specNumber) {
-        let idx = this.specNumbers.findIndex((item) => {
-          return item === specNumber
+        this.$set(this.watchList, specNumber, {
+          files: data,
+          lastUpdate: new Date()
         })
-        if (idx === -1) {
-          return
-        }
-        this.$set(this.specLists, idx, data)
-        this.$set(this.lastUpdates, idx, new Date())
       },
       remove: function (specNumber) {
-        const idx = this.specNumbers.findIndex((item) => {
-          return item === specNumber
-        })
-        if (idx === -1) {
-          return
-        }
-        this.specNumbers.splice(idx, 1)
-        this.specLists.splice(idx, 1)
-        this.lastUpdates.splice(idx, 1)
+        this.$delete(this.watchList, specNumber)
       }
     },
     mounted () {
       ipcRenderer.removeAllListeners('specWatchDog-filePath')
       ipcRenderer.on('specWatchDog-filePath', (event, data) => {
         this.watchListFilePath = JSON.parse(data)
-        let items = JSON.parse(readFileSync(this.watchListFilePath, 'utf8'))
-        this.specNumbers = Object.keys(items)
-        for (let i = 0; i < this.specNumbers.length; i++) {
-          let specNumber = this.specNumbers[i]
-          this.specLists.push(items[specNumber].data)
-          this.lastUpdates.push(items[specNumber].lastUpdate)
-        }
+        this.watchList = JSON.parse(readFileSync(this.watchListFilePath, 'utf8'))
       })
       ipcRenderer.send('specWatchDog-ready')
     }
