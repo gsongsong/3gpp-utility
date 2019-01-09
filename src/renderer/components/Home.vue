@@ -40,14 +40,16 @@ export default {
         }
         this.$set(this.watchList, specNumber, {
           files: [],
-          lastUpdate: null
+          lastUpdate: null,
+          completed: false
         })
         this.specNumber = ''
       },
       update: function (data, specNumber) {
         this.$set(this.watchList, specNumber, {
           files: data,
-          lastUpdate: new Date()
+          lastUpdate: new Date(),
+          completed: true
         })
       },
       remove: function (specNumber) {
@@ -59,6 +61,9 @@ export default {
       ipcRenderer.on('specWatchDog-filePath', (event, data) => {
         this.watchListFilePath = JSON.parse(data)
         this.watchList = JSON.parse(readFileSync(this.watchListFilePath, 'utf8'))
+        for (let specNumber in this.watchList) {
+          this.$set(this.watchList, specNumber, Object.assign(this.watchList[specNumber], {completed: false}))
+        }
       })
       ipcRenderer.send('specWatchDog-ready')
     }
