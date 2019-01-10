@@ -5,10 +5,14 @@
         {{ heading }}
       </p>
       <p class="card-header-icon">
-        <a v-on:click="getList(true)" class="has-text-success">⟳</a>
+        <a v-on:click="getList(true)" class="has-text-success">
+          <font-awesome-icon icon="sync"></font-awesome-icon>
+        </a>
       </p>
       <p class="card-header-icon">
-        <a v-on:click="emitRemove()" class="has-text-danger">🞬</a>
+        <a v-on:click="emitRemove()" class="has-text-danger">
+          <font-awesome-icon icon="times"></font-awesome-icon>
+        </a>
       </p>
     </div>
     <p class="card-content" style="position: relative;">

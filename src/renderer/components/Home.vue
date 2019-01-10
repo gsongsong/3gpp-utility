@@ -5,7 +5,9 @@
       <b-field>
         <b-input v-model="specNumber" placeholder="Spec number"></b-input>
         <p class="control">
-          <button class="button is-success" v-on:click="add(specNumber)" :disabled="!specNumber">✚</button>
+          <button class="button is-success" v-on:click="add(specNumber)" :disabled="!specNumber">
+            <font-awesome-icon icon="plus"></font-awesome-icon>
+          </button>
         </p>
       </b-field>
     </div>
