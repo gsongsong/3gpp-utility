@@ -10,15 +10,15 @@
         <template slot-scope="props">
           <b-table-column field="name" label="Name">
             {{ props.row.name ? props.row.name : '' }}
-            <b-input v-if="!props.row.name" v-model="nameTemp"></b-input>
+            <b-input v-if="!props.row.name" v-model="nameTemp" v-on:keyup.native.enter="add"></b-input>
           </b-table-column>
           <b-table-column field="fLow" label="Freq Low" centered="">
             {{ props.row.fLow ? props.row.fLow : '' }}
-            <b-input type="number" v-if="!props.row.fLow" v-model="fLowTemp"></b-input>
+            <b-input type="number" v-if="!props.row.fLow" v-model="fLowTemp" v-on:keyup.native.enter="add"></b-input>
           </b-table-column>
           <b-table-column field="fHigh" label="Freq High" centered>
             {{ props.row.fHigh ? props.row.fHigh : '' }}
-            <b-input type="number" v-if="!props.row.fHigh" v-model="fHighTemp"></b-input>
+            <b-input type="number" v-if="!props.row.fHigh" v-model="fHighTemp" v-on:keyup.native.enter="add"></b-input>
           </b-table-column>
           <b-table-column field="button">
             <button class="button is-danger" v-if="props.row.name" v-on:click="remove(props.row.id)">🞬</button>
