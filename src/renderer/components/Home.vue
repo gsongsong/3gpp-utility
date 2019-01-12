@@ -56,12 +56,14 @@ export default {
         this.specNumber = ''
       },
       update: function (data, specNumber) {
-        this.$set(this.watchList, specNumber, {
-          files: data,
-          lastUpdate: new Date(),
-          completed: true
-        })
-        if (this.completedAll()) {
+        if (data !== null) {
+          this.$set(this.watchList, specNumber, {
+            files: data,
+            lastUpdate: new Date()
+          })
+        }
+        this.$set(this.watchList, specNumber, Object.assign(this.watchList[specNumber], {completed: true}))
+        if (this.completedAll() && data !== null) {
           writeFileSync(this.watchListFilePath, JSON.stringify(this.watchList))
         }
       },

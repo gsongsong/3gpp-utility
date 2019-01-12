@@ -25,12 +25,12 @@
             {{ `${props.row.version[0]}.${props.row.version[1]}.${props.row.version[2]}` }}
           </b-table-column>
           <b-table-column field="date" label="Date" centered>
-            {{ `${props.row.date.getFullYear()}-${props.row.date.getMonth() + 1}-${props.row.date.getDate()}` }}
+            {{ `${yyyyMmDd(props.row.date)}` }}
           </b-table-column>
         </template>
         <template slot="footer">
           <div class="has-text-right has-text-grey" v-if="data.length">
-            Last update: {{ `${lastUpdate.getFullYear()}-${lastUpdate.getMonth() + 1}-${lastUpdate.getDate()}` }}
+            Last update: {{ `${yyyyMmDd(lastUpdate)}` }}
           </div>
         </template>
       </b-table>
@@ -51,7 +51,7 @@
       },
       data: {
         type: Array,
-        default: ''
+        default: []
       },
       lastUpdate: {
         type: Date,
@@ -73,8 +73,9 @@
       getList: function (forced = false) {
         this.isWorking = true
         let timeDiffMs = new Date().getTime() - new Date(this.lastUpdate).getTime()
-        if (timeDiffMs / 1000 / 60 / 60 / 24 < 7 && !forced) {
+        if (timeDiffMs / 1000 / 60 / 60 / 24 < 1 && !forced) {
           this.isWorking = false
+          this.$emit('spec-list-changed', null)
           return
         }
         GetList(this.heading, (err, list) => {
@@ -93,6 +94,10 @@
           })
           this.$emit('spec-list-changed', list.slice(0, 3))
         })
+      },
+      yyyyMmDd: function (dateString) {
+        let date = new Date(dateString)
+        return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
       }
     },
     mounted () {
