@@ -16,7 +16,8 @@
     </b-field>
     <div>
       <b-field class="control" grouped>
-        <b-input v-model="msgIeName" :disabled="specType === 'Unknown'" placeholder="Message/IE name"></b-input>
+        <b-autocomplete v-model="msgIeName" :data="filteredMsgIeList"
+          :disabled="specType === 'Unknown'" placeholder="Message/IE name"></b-autocomplete>
         <b-checkbox v-model="doNotExpand" native-value="true" :disabled="specType === 'Unknown'" type="is-success">Do not expand sub-IE</b-checkbox>
       </b-field>
       <b-field grouped>
@@ -29,7 +30,7 @@
           </b-tooltip>
         </p>
       </b-field>
-      <b-loading :active.sync="isFormatting" :is-full-page="true"></b-loading>
+      <b-loading :active.sync="isWorking" :is-full-page="true"></b-loading>
     </div>
   </div>
 </template>
@@ -45,13 +46,22 @@
         file: null,
         specType: 'Unknown',
         msgIeName: null,
+        msgIeList: [],
         doNotExpand: [],
-        isFormatting: false,
+        isWorking: false,
         defaultPathDir: null
+      }
+    },
+    computed: {
+      filteredMsgIeList: function () {
+        return this.msgIeList.filter((msgIeName) => {
+          return msgIeName.toLowerCase().indexOf(this.msgIeName.toLowerCase()) >= 0
+        })
       }
     },
     methods: {
       checkSpecType: function (file) {
+        this.isWorking = true
         // File object: https://developer.mozilla.org/en-US/docs/Web/API/File
         // Electron adds `path` attribute: https://tinydew4.github.io/electron-ko/docs/api/file-object/
         let fs = require('fs')
@@ -64,14 +74,20 @@
         }
         if (indexRrc >= 0 && (indexAp === -1 || (indexAp >= 0 && indexRrc < indexAp))) {
           this.specType = 'RRC Protocol'
+        } else if (indexAp >= 0 && (indexRrc === -1 || (indexRrc >= 0 && indexAp < indexRrc))) {
+          this.specType = 'Application Protocol'
+        } else {
+          this.isWorking = false
           return
         }
-        if (indexAp >= 0 && (indexRrc === -1 || (indexRrc >= 0 && indexAp < indexRrc))) {
-          this.specType = 'Application Protocol'
+        let data = {
+          filePath: this.file.path,
+          specType: this.specType
         }
+        ipcRenderer.send('ie-list-request', JSON.stringify(data))
       },
       format: function (msgIeName) {
-        this.isFormatting = true
+        this.isWorking = true
         if (msgIeName === '__all') {
           this.msgIeName = null
         }
@@ -85,7 +101,23 @@
       }
     },
     mounted () {
-      ipcRenderer.removeAllListeners('format-response')
+      ipcRenderer.removeAllListeners('ie-list-response', 'format-response')
+      ipcRenderer.on('ie-list-response', (event, data) => {
+        let result = JSON.parse(data)
+        if (result.error) {
+          this.$snackbar.open({
+            message: result.error,
+            type: 'is-warning',
+            position: 'is-bottom-right',
+            actionText: 'Dismiss',
+            indefinite: true,
+            queue: false
+          })
+        } else {
+          this.msgIeList = result.msgIeList
+          this.isWorking = false
+        }
+      })
       ipcRenderer.on('format-response', (event, data) => {
         let result = JSON.parse(data)
         if (result.error) {
@@ -141,7 +173,7 @@
             })
           }
         }
-        this.isFormatting = false
+        this.isWorking = false
       })
     }
   }
