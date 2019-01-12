@@ -67,12 +67,18 @@ export default {
           })
         }
         this.$set(this.watchList, specNumber, Object.assign(this.watchList[specNumber], {completed: true}))
-        if (this.completedAll() && data !== null) {
-          writeFileSync(this.watchListFilePath, JSON.stringify(this.watchList))
+        if (data !== null) {
+          this.save()
         }
       },
       remove: function (specNumber) {
         this.$delete(this.watchList, specNumber)
+        this.save()
+      },
+      save: function () {
+        if (this.completedAll()) {
+          writeFileSync(this.watchListFilePath, JSON.stringify(this.watchList))
+        }
       }
     },
     mounted () {
