@@ -15,9 +15,11 @@
       </span>
     </b-field>
     <div>
-      <b-field class="control" grouped>
+      <b-field>
         <b-autocomplete v-model="msgIeName" :data="filteredMsgIeList"
           :disabled="specType === 'Unknown'" placeholder="Message/IE name"></b-autocomplete>
+      </b-field>
+      <b-field>
         <b-checkbox v-model="doNotExpand" native-value="true" :disabled="specType === 'Unknown'" type="is-success">Do not expand sub-IE</b-checkbox>
       </b-field>
       <b-field grouped>
@@ -45,7 +47,7 @@
       return {
         file: null,
         specType: 'Unknown',
-        msgIeName: null,
+        msgIeName: '',
         msgIeList: [],
         doNotExpand: [],
         isWorking: false,
