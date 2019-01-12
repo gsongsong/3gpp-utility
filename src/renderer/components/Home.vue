@@ -14,7 +14,8 @@
     <div id="specWatchListWrapper" class="section columns">
       <div v-for="(data, sn) in watchList" v-bind:key="sn" class="column is-one-third">
         <spec-table :heading="sn" :data="data.files" :lastUpdate="new Date(data.lastUpdate)"
-          v-on:spec-list-changed="update($event, sn)" v-on:remove="remove(sn)"></spec-table>
+          v-on:spec-list-changed="update($event, sn)" v-on:remove="remove(sn)"
+          v-on:spec-list-updating="working(sn)"></spec-table>
       </div>
     </div>
   </div>
@@ -54,6 +55,9 @@ export default {
           completed: false
         })
         this.specNumber = ''
+      },
+      working: function (specNumber) {
+        this.$set(this.watchList, specNumber, Object.assign(this.watchList[specNumber], {completed: false}))
       },
       update: function (data, specNumber) {
         if (data !== null) {

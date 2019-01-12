@@ -72,6 +72,7 @@
       },
       getList: function (forced = false) {
         this.isWorking = true
+        this.$emit('spec-list-updating')
         let timeDiffMs = new Date().getTime() - new Date(this.lastUpdate).getTime()
         if (timeDiffMs / 1000 / 60 / 60 / 24 < 1 && !forced) {
           this.isWorking = false
