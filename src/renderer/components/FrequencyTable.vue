@@ -10,19 +10,24 @@
         <template slot-scope="props">
           <b-table-column field="name" label="Name">
             {{ props.row.name ? props.row.name : '' }}
-            <b-input v-if="!props.row.name" v-model="nameTemp" v-on:keyup.native.enter="add"></b-input>
+            <b-input v-if="!props.row.name" v-model="nameTemp"
+              v-on:keyup.native.enter="add" size="is-small"></b-input>
           </b-table-column>
           <b-table-column field="fLow" label="Freq Low" centered="">
             {{ props.row.fLow ? props.row.fLow : '' }}
-            <b-input type="number" v-if="!props.row.fLow" v-model="fLowTemp" v-on:keyup.native.enter="add"></b-input>
+            <b-input type="number" v-if="!props.row.fLow" v-model="fLowTemp"
+              v-on:keyup.native.enter="add" size="is-small"></b-input>
           </b-table-column>
           <b-table-column field="fHigh" label="Freq High" centered>
             {{ props.row.fHigh ? props.row.fHigh : '' }}
-            <b-input type="number" v-if="!props.row.fHigh" v-model="fHighTemp" v-on:keyup.native.enter="add"></b-input>
+            <b-input type="number" v-if="!props.row.fHigh" v-model="fHighTemp"
+              v-on:keyup.native.enter="add" size="is-small"></b-input>
           </b-table-column>
-          <b-table-column field="button">
-            <button class="button is-danger" v-if="props.row.name" v-on:click="remove(props.row.id)">🞬</button>
-            <button class="button is-success" v-if="!props.row.name" v-on:click="add">✚</button>
+          <b-table-column field="button" centered>
+            <a class="has-text-danger" v-if="props.row.name" v-on:click="remove(props.row.id)">🞬</a>
+            <a class="has-text-success" v-if="!props.row.name" v-on:click="add">
+              <font-awesome-icon icon="plus"></font-awesome-icon>
+            </a>
           </b-table-column>
         </template>
         <template slot="footer">
