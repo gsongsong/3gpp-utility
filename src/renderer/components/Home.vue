@@ -1,12 +1,11 @@
 <template>
   <div>
     <div class="section">
-      <b-field label="Add to watch list"></b-field>
       <b-field>
         <b-input v-model="specNumber" placeholder="Spec number" v-on:keyup.native.enter="add(specNumber)"></b-input>
         <p class="control">
           <button class="button is-success" v-on:click="add(specNumber)" :disabled="!specNumber">
-            <font-awesome-icon icon="plus"></font-awesome-icon>
+            Add to watch list
           </button>
         </p>
       </b-field>
