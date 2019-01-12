@@ -21,7 +21,7 @@
 </template>
 
 <script>
-  import { readFileSync } from 'fs'
+  import { readFileSync, writeFileSync } from 'fs'
   import { ipcRenderer } from 'electron'
   import SpecTable from './SpecTable'
 
@@ -36,6 +36,14 @@ export default {
       }
     },
     methods: {
+      completedAll: function () {
+        for (let watchItem in this.watchList) {
+          if (!this.watchList[watchItem].completed) {
+            return false
+          }
+          return true
+        }
+      },
       add: function (specNumber) {
         if (this.watchList[specNumber]) {
           return
@@ -53,6 +61,9 @@ export default {
           lastUpdate: new Date(),
           completed: true
         })
+        if (this.completedAll()) {
+          writeFileSync(this.watchListFilePath, JSON.stringify(this.watchList))
+        }
       },
       remove: function (specNumber) {
         this.$delete(this.watchList, specNumber)
