@@ -38,6 +38,14 @@ function createWindow () {
     mainWindow.loadURL(winURL)
   })
 
+  ipcMain.on('ie-list-request', (event, data) => {
+    workerWindow.webContents.send('ie-list-request', data)
+  })
+
+  ipcMain.on('ie-list-response', (event, data) => {
+    mainWindow.webContents.send('ie-list-response', data)
+  })
+
   ipcMain.on('format-request', (event, data) => {
     workerWindow.webContents.send('format-request', data)
   })

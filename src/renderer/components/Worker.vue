@@ -26,6 +26,32 @@
       }
     },
     mounted () {
+      ipcRenderer.on('ie-list-request', (event, data) => {
+        let {filePath, specType} = JSON.parse(data)
+        let result = {}
+        try {
+          if (specType === 'RRC Protocol') {
+            let text = extractRan2(readFileSync(filePath, 'utf8'))
+            let asn1Json = parseRan2(text)
+            result.msgIeList = []
+            for (let moduleName in asn1Json) {
+              result.msgIeList = result.msgIeList.concat(Object.keys(asn1Json[moduleName]))
+            }
+          } else if (specType === 'Application Protocol') {
+            let html = readFileSync(filePath, 'utf8')
+            let definitions = parseRan3(html)
+            result.msgIeList = []
+            for (let sectionNumber in definitions) {
+              if (definitions[sectionNumber].name) {
+                result.msgIeList.push(definitions[sectionNumber].name)
+              }
+            }
+          }
+        } catch (e) {
+          result = {error: e}
+        }
+        event.sender.send('ie-list-response', JSON.stringify(result))
+      })
       ipcRenderer.on('format-request', (event, data/* filePath, specType, msgIeName, doNotExpand */) => {
         let {filePath, specType, msgIeName, raw} = JSON.parse(data)
         let result = {}
