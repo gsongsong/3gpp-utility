@@ -1,10 +1,10 @@
 <template>
   <div class="panel">
     <div class="panel-heading">
-      <span v-if="!isEditing" v-on:click="isEditing = true">
+      <span v-if="!isEditingRatName" v-on:click="isEditingRatName = true">
         {{ ratName }}
       </span>
-      <b-input v-model="ratName" v-if="isEditing" v-on:blur="onRatNameChange"
+      <b-input v-model="ratName" v-if="isEditingRatName" v-on:blur="onRatNameChange"
         v-on:keyup.native.enter="onRatNameChange"></b-input>
     </div>
     <div class="panel-block">
@@ -35,7 +35,7 @@
     },
     data () {
       return {
-        isEditing: false,
+        isEditingRatName: false,
         downlink: [],
         uplink: []
       }
@@ -49,7 +49,7 @@
         })
       },
       onRatNameChange () {
-        this.isEditing = false
+        this.isEditingRatName = false
         this.emitDataChange()
       },
       onDataChange (data, keyName) {
