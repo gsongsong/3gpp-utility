@@ -2,9 +2,9 @@
   <div>
     <div class="section">
       <b-field>
-        <b-input v-model="specNumber" placeholder="Spec number" v-on:keyup.native.enter="add(specNumber)"></b-input>
+        <b-input v-model="specNumber" placeholder="Spec number" @keyup.native.enter="add(specNumber)" />
         <p class="control">
-          <button class="button is-success" v-on:click="add(specNumber)" :disabled="!specNumber">
+          <button class="button is-success" @click="add(specNumber)" :disabled="!specNumber">
             Add to watch list
           </button>
         </p>
@@ -13,19 +13,20 @@
     <div id="specWatchListWrapper" class="section columns">
       <div v-for="(data, sn) in watchList" v-bind:key="sn" class="column is-one-third">
         <spec-table :heading="sn" :data="data.files" :lastUpdate="new Date(data.lastUpdate)"
-          v-on:spec-list-changed="update($event, sn)" v-on:remove="remove(sn)"
-          v-on:spec-list-updating="working(sn)"></spec-table>
+          @spec-list-updating="working(sn)" @spec-list-change="update($event, sn)"
+          @remove="remove(sn)" />
       </div>
     </div>
   </div>
 </template>
 
 <script>
-  import { readFileSync, writeFileSync } from 'fs'
-  import { ipcRenderer } from 'electron'
+  import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
+  import { join } from 'path'
+  import { remote } from 'electron'
   import SpecTable from './SpecTable'
 
-export default {
+  export default {
     name: 'home',
     components: { SpecTable },
     data () {
@@ -36,15 +37,15 @@ export default {
       }
     },
     methods: {
-      completedAll: function () {
+      completedAll () {
         for (let watchItem in this.watchList) {
           if (!this.watchList[watchItem].completed) {
             return false
           }
-          return true
         }
+        return true
       },
-      add: function (specNumber) {
+      add (specNumber) {
         if (this.watchList[specNumber]) {
           return
         }
@@ -55,10 +56,10 @@ export default {
         })
         this.specNumber = ''
       },
-      working: function (specNumber) {
+      working (specNumber) {
         this.$set(this.watchList, specNumber, Object.assign(this.watchList[specNumber], {completed: false}))
       },
-      update: function (data, specNumber) {
+      update (data, specNumber) {
         if (data !== null) {
           this.$set(this.watchList, specNumber, {
             files: data,
@@ -66,30 +67,32 @@ export default {
           })
         }
         this.$set(this.watchList, specNumber, Object.assign(this.watchList[specNumber], {completed: true}))
-        if (data !== null) {
-          this.save()
-        }
+        this.save()
       },
-      remove: function (specNumber) {
+      remove (specNumber) {
         this.$delete(this.watchList, specNumber)
         this.save()
       },
-      save: function () {
+      save () {
         if (this.completedAll()) {
           writeFileSync(this.watchListFilePath, JSON.stringify(this.watchList))
         }
       }
     },
     mounted () {
-      ipcRenderer.removeAllListeners('specWatchDog-filePath')
-      ipcRenderer.on('specWatchDog-filePath', (event, data) => {
-        this.watchListFilePath = JSON.parse(data)
-        this.watchList = JSON.parse(readFileSync(this.watchListFilePath, 'utf8'))
-        for (let specNumber in this.watchList) {
-          this.$set(this.watchList, specNumber, Object.assign(this.watchList[specNumber], {completed: false}))
-        }
-      })
-      ipcRenderer.send('specWatchDog-ready')
+      let appPath = remote.app.getPath('home')
+      let appDir = join(appPath, '.3gpp-electron')
+      if (!existsSync(appDir)) {
+        mkdirSync(appDir)
+      }
+      this.watchListFilePath = join(appDir, 'specWatchList.json')
+      if (!existsSync(this.watchListFilePath)) {
+        writeFileSync(this.watchListFilePath, JSON.stringify({}))
+      }
+      this.watchList = JSON.parse(readFileSync(this.watchListFilePath, 'utf8'))
+      for (let specNumber in this.watchList) {
+        this.$set(this.watchList, specNumber, Object.assign(this.watchList[specNumber], {completed: false}))
+      }
     }
   }
 </script>

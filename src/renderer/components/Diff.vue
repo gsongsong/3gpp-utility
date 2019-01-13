@@ -1,51 +1,46 @@
 <template>
   <div id="wrapper" class="section">
     <b-field class="file">
-      <b-upload v-model="fileOld" v-on:input="checkSpecType($event, 'specTypeOld')">
-        <a class="button is-success">
-          <span>Choose old spec</span>
-        </a>
+      <b-upload v-model="fileOld" @input="checkSpecType($event, 'specTypeOld')">
+        <a class="button is-success">Choose old spec</a>
       </b-upload>
       <span class="file-name" v-if="fileOld">
         {{ fileOld.name }}
         <b-tag :type="[{'is-danger': specTypeOld === 'Unknown'},
-                        {'is-success': specTypeOld !== 'Unknown'}]">
+                       {'is-success': specTypeOld !== 'Unknown'}]">
           {{ specTypeOld }}
         </b-tag>
       </span>
     </b-field>
     <b-field class="file">
-      <b-upload v-model="fileNew" v-on:input="checkSpecType($event, 'specTypeNew')">
-        <a class="button is-success">
-          <span>Choose new spec</span>
-        </a>
+      <b-upload v-model="fileNew" @input="checkSpecType($event, 'specTypeNew')">
+        <a class="button is-success">Choose new spec</a>
       </b-upload>
       <span class="file-name" v-if="fileNew">
         {{ fileNew.name }}
         <b-tag :type="[{'is-danger': specTypeNew === 'Unknown'},
-                        {'is-success': specTypeNew !== 'Unknown'}]">
+                       {'is-success': specTypeNew !== 'Unknown'}]">
           {{ specTypeNew }}
         </b-tag>
       </span>
     </b-field>
-    <b-field label="Comparison mode">
-    </b-field>
+    <b-field label="Comparison mode" />
     <b-field>
       <b-radio-button v-model="comparisonMode" native-value="line-by-line" type="is-success">
-        <span>line-by-line</span>
+        line-by-line
       </b-radio-button>
       <b-radio-button v-model="comparisonMode" native-value="side-by-side" type="is-success">
-        <span>side-by-side</span>
+        side-by-side
       </b-radio-button>
     </b-field>
     <b-tooltip label="RRC Protocol only" position="is-right" type="is-info">
-      <button class="button is-success" v-on:click="diff()"
-              :disabled="!fileOld || !fileNew || specTypeOld !== 'RRC Protocol' ||
-                         specTypeNew !== 'RRC Protocol'">
+      <button class="button is-success" @click="diff()"
+              :disabled="!fileOld || specTypeOld !== 'RRC Protocol' ||
+                         !fileNew || specTypeNew !== 'RRC Protocol'">
         Diff
       </button>
     </b-tooltip>
-    <b-loading :active.sync="isWorking" :is-full-page="true"></b-loading>
+    <b-loading :active.sync="isWorking" :is-full-page="true" />
   </div>
 </template>
 
@@ -66,7 +61,7 @@
       }
     },
     methods: {
-      checkSpecType: function (file, fileKey) {
+      checkSpecType (file, fileKey) {
         // File object: https://developer.mozilla.org/en-US/docs/Web/API/File
         // Electron adds `path` attribute: https://tinydew4.github.io/electron-ko/docs/api/file-object/
         let fs = require('fs')

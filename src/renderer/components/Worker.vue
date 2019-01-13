@@ -57,13 +57,9 @@
         let result = {}
         try {
           if (specType === 'RRC Protocol') {
-            console.log('Extracting')
             let text = extractRan2(readFileSync(filePath, 'utf8'))
-            console.log('Parsing')
             let asn1Json = parseRan2(text)
-            console.log('Formatting')
             result = formatRan2(msgIeName, asn1Json, raw)
-            console.log('Done')
           } else if (specType === 'Application Protocol') {
             let html = readFileSync(filePath, 'utf8')
             let definitions = parseRan3(html)

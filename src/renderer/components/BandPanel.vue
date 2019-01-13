@@ -1,20 +1,19 @@
 <template>
   <div class="panel">
     <div class="panel-heading">
-      <span v-if="!isEditing" v-on:click="isEditing = true">
+      <span v-if="!isEditingRatName" @click="isEditingRatName = true">
         {{ ratName }}
       </span>
-      <b-input v-model="ratName" v-if="isEditing" v-on:blur="onRatNameChange"></b-input>
+      <b-input v-model="ratName" v-if="isEditingRatName" @blur="onRatNameChange"
+        @keyup.native.enter="onRatNameChange" />
     </div>
     <div class="panel-block">
       <div class="columns">
         <div class="column">
-          <frequency-table heading="Downlink" v-on:data-changed="onDataChange($event, 'downlink')">
-          </frequency-table>
+          <frequency-table heading="Downlink" @data-change="onDataChange($event, 'downlink')" />
         </div>
         <div class="column">
-          <frequency-table heading="Uplink" v-on:data-changed="onDataChange($event, 'uplink')">
-          </frequency-table>
+          <frequency-table heading="Uplink" @data-change="onDataChange($event, 'uplink')" />
         </div>
       </div>
     </div>
@@ -27,34 +26,38 @@
   export default {
     components: { FrequencyTable },
     props: {
-      ratName: {
+      ratNameInitial: {
         type: String,
-        default: 'RAT'
+        default: 'RAT Name'
       }
     },
     data () {
       return {
-        isEditing: false,
+        ratName: '',
+        isEditingRatName: false,
         downlink: [],
         uplink: []
       }
     },
     methods: {
-      emitDataChange: function () {
-        this.$emit('data-changed', {
+      emitDataChange () {
+        this.$emit('data-change', {
           ratName: this.ratName,
           downlink: this.downlink,
           uplink: this.uplink
         })
       },
-      onRatNameChange: function () {
-        this.isEditing = false
+      onRatNameChange () {
+        this.isEditingRatName = false
         this.emitDataChange()
       },
-      onDataChange: function (data, keyName) {
+      onDataChange (data, keyName) {
         this[keyName] = data
         this.emitDataChange()
       }
+    },
+    mounted () {
+      this.ratName = this.ratNameInitial
     }
   }
 </script>

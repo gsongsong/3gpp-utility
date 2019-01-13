@@ -1,17 +1,15 @@
 <template>
   <div class="card">
     <div class="card-header">
-      <p class="card-header-title">
-        {{ heading }}
-      </p>
+      <p class="card-header-title">{{ heading }}</p>
       <p class="card-header-icon">
-        <a v-on:click="getList(true)" class="has-text-success">
-          <font-awesome-icon icon="sync"></font-awesome-icon>
+        <a class="has-text-success" @click="getList(true)">
+          <font-awesome-icon icon="sync" />
         </a>
       </p>
       <p class="card-header-icon">
-        <a v-on:click="emitRemove()" class="has-text-danger">
-          <font-awesome-icon icon="times"></font-awesome-icon>
+        <a class="has-text-danger" @click="$emit('remove')">
+          <font-awesome-icon icon="times" />
         </a>
       </p>
     </div>
@@ -19,10 +17,12 @@
       <b-table class="table is-fullwidth" :data="data" striped narrowed hoverable>
         <template slot-scope="props">
           <b-table-column field="fileName" label="File name">
-            <a v-on:click="open(props.row.url)" class="has-text-success">{{ props.row.name }}</a>
+            <a class="has-text-success" @click="open(props.row.url)">
+              {{ props.row.name }}
+            </a>
           </b-table-column>
           <b-table-column field="version" label="Version" centered>
-            {{ `${props.row.version[0]}.${props.row.version[1]}.${props.row.version[2]}` }}
+            {{ version(props.row.version) }}
           </b-table-column>
           <b-table-column field="date" label="Date" centered>
             {{ `${yyyyMmDd(props.row.date)}` }}
@@ -35,7 +35,7 @@
         </template>
       </b-table>
     </p>
-    <b-loading :active.sync="isWorking" :is-full-page="false"></b-loading>
+    <b-loading :active.sync="isWorking" :is-full-page="false" />
   </div>
 </template>
 
@@ -55,7 +55,7 @@
       },
       lastUpdate: {
         type: Date,
-        default: new Date()
+        default: null // 1970-01-01
       }
     },
     data () {
@@ -64,24 +64,22 @@
       }
     },
     methods: {
-      emitRemove: function () {
-        this.$emit('remove')
-      },
-      open: function (url) {
+      open (url) {
         shell.openExternal(url)
       },
-      getList: function (forced = false) {
+      getList (forced = false) {
         this.isWorking = true
         this.$emit('spec-list-updating')
         let timeDiffMs = new Date().getTime() - new Date(this.lastUpdate).getTime()
         if (timeDiffMs / 1000 / 60 / 60 / 24 < 1 && !forced) {
           this.isWorking = false
-          this.$emit('spec-list-changed', null)
+          this.$emit('spec-list-change', null)
           return
         }
         GetList(this.heading, (err, list) => {
           this.isWorking = false
           if (err) {
+            this.$emit('spec-list-change', null)
             return
           }
           list.sort((a, b) => {
@@ -93,10 +91,13 @@
             }
             return b.version[0] - a.version[0]
           })
-          this.$emit('spec-list-changed', list.slice(0, 3))
+          this.$emit('spec-list-change', list.slice(0, 3))
         })
       },
-      yyyyMmDd: function (dateString) {
+      version (versionArr) {
+        return `${versionArr[0]}.${versionArr[1]}.${versionArr[2]}`
+      },
+      yyyyMmDd (dateString) {
         let date = new Date(dateString)
         return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
       }

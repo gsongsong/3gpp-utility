@@ -1,10 +1,8 @@
 <template>
   <div id="wrapper" class="section">
     <b-field class="file">
-      <b-upload v-model="file" v-on:input="checkSpecType($event)">
-        <a class="button is-success">
-          <span>Choose spec file</span>
-        </a>
+      <b-upload v-model="file" @input="checkSpecType($event)">
+        <a class="button is-success">Choose spec file</a>
       </b-upload>
       <span class="file-name" v-if="file">
         {{ file.name }}
@@ -17,22 +15,31 @@
     <div>
       <b-field>
         <b-autocomplete v-model="msgIeName" :data="filteredMsgIeList"
-          :disabled="specType === 'Unknown'" placeholder="Message/IE name"></b-autocomplete>
+          :disabled="specType === 'Unknown'" placeholder="Message/IE name" />
       </b-field>
       <b-field>
-        <b-checkbox v-model="doNotExpand" native-value="true" :disabled="specType === 'Unknown'" type="is-success">Do not expand sub-IE</b-checkbox>
+        <b-checkbox v-model="doNotExpand" native-value="true"
+          :disabled="specType === 'Unknown'" type="is-success">
+          Do not expand sub-IE
+        </b-checkbox>
       </b-field>
       <b-field grouped>
         <p class="control">
-          <button class="button is-success" :disabled="specType === 'Unknown' || !msgIeName" v-on:click="format(msgIeName)">Format message/IE</button>
+          <button class="button is-success" @click="format(msgIeName)"
+            :disabled="specType === 'Unknown' || !msgIeName">
+            Format message/IE
+          </button>
         </p>
         <p class="control">
           <b-tooltip label="Application Protocol only" position="is-right" type="is-info">
-            <button class="button is-success" :disabled="specType !== 'Application Protocol'" v-on:click="format('__all')">Format all</button>
+            <button class="button is-success" @click="format('__all')"
+              :disabled="specType !== 'Application Protocol'">
+              Format all
+            </button>
           </b-tooltip>
         </p>
       </b-field>
-      <b-loading :active.sync="isWorking" :is-full-page="true"></b-loading>
+      <b-loading :active.sync="isWorking" :is-full-page="true" />
     </div>
   </div>
 </template>
@@ -55,14 +62,14 @@
       }
     },
     computed: {
-      filteredMsgIeList: function () {
+      filteredMsgIeList () {
         return this.msgIeList.filter((msgIeName) => {
           return msgIeName.toLowerCase().indexOf(this.msgIeName.toLowerCase()) >= 0
         })
       }
     },
     methods: {
-      checkSpecType: function (file) {
+      checkSpecType (file) {
         this.isWorking = true
         // File object: https://developer.mozilla.org/en-US/docs/Web/API/File
         // Electron adds `path` attribute: https://tinydew4.github.io/electron-ko/docs/api/file-object/
@@ -88,7 +95,7 @@
         }
         ipcRenderer.send('ie-list-request', JSON.stringify(data))
       },
-      format: function (msgIeName) {
+      format (msgIeName) {
         this.isWorking = true
         if (msgIeName === '__all') {
           this.msgIeName = null
