@@ -1,21 +1,19 @@
 <template>
   <div class="panel">
     <div class="panel-heading">
-      <span v-if="!isEditingRatName" v-on:click="isEditingRatName = true">
+      <span v-if="!isEditingRatName" @click="isEditingRatName = true">
         {{ ratName }}
       </span>
-      <b-input v-model="ratName" v-if="isEditingRatName" v-on:blur="onRatNameChange"
-        v-on:keyup.native.enter="onRatNameChange"></b-input>
+      <b-input v-model="ratName" v-if="isEditingRatName" @blur="onRatNameChange"
+        @keyup.native.enter="onRatNameChange" />
     </div>
     <div class="panel-block">
       <div class="columns">
         <div class="column">
-          <frequency-table heading="Downlink" v-on:data-changed="onDataChange($event, 'downlink')">
-          </frequency-table>
+          <frequency-table heading="Downlink" @data-change="onDataChange($event, 'downlink')" />
         </div>
         <div class="column">
-          <frequency-table heading="Uplink" v-on:data-changed="onDataChange($event, 'uplink')">
-          </frequency-table>
+          <frequency-table heading="Uplink" @data-change="onDataChange($event, 'uplink')" />
         </div>
       </div>
     </div>
@@ -30,7 +28,7 @@
     props: {
       ratNameInitial: {
         type: String,
-        default: 'RAT'
+        default: 'RAT Name'
       }
     },
     data () {
@@ -43,7 +41,7 @@
     },
     methods: {
       emitDataChange () {
-        this.$emit('data-changed', {
+        this.$emit('data-change', {
           ratName: this.ratName,
           downlink: this.downlink,
           uplink: this.uplink

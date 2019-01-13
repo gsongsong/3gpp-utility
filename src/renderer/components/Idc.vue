@@ -2,56 +2,46 @@
   <div id="wrapper" class="section">
     <div class="columns">
       <div class="column">
-        <band-panel ratName="RAT 1" v-on:data-changed="onDataChange($event, 'rat1')"></band-panel> 
+        <band-panel ratName="RAT 1" @data-change="onDataChange($event, 'rat1')" />
       </div>
       <div class="column">
-        <band-panel ratName="RAT 2" v-on:data-changed="onDataChange($event, 'rat2')"></band-panel>
+        <band-panel ratName="RAT 2" @data-change="onDataChange($event, 'rat2')" />
       </div>
     </div>
     <div class="columns is-centered">
       <div class="column is-one-quarter">
         <b-field position="is-centered">
           <p class="control">
-            <span class="button is-static">
-              Harmonics order up to
-            </span>
+            <span class="button is-static">Harmonics order up to</span>
           </p>
-          <b-input type="number" min="2" max="9" v-model="orderHarmonics"></b-input>
+          <b-input type="number" min="2" max="9" v-model="orderHarmonics" />
         </b-field>
       </div>
       <div class="column is-one-quarter">
         <b-field position="is-centered">
           <p class="control">
-            <span class="button is-static">
-              IMD order up to
-            </span>
+            <span class="button is-static">IMD order up to</span>
           </p>
-          <b-input type="number" min="2" max="9" v-model="orderImd"></b-input>
+          <b-input type="number" min="2" max="9" v-model="orderImd" />
         </b-field>
       </div>
     </div>
     <div class="columns">
       <div class="column has-text-centered">
-        <button class="button is-success" v-on:click="calculate">
-          Calculate
-        </button>
-        <b-loading :active.sync="isWorking" :is-full-page="true"></b-loading>
+        <button class="button is-success" @click="calculate">Calculate</button>
+        <b-loading :active.sync="isWorking" :is-full-page="true" />
       </div>
     </div>
     <div class="columns">
       <div class="column">
-        <idc-table heading="Harmonic Interference" :data="bandsHarmonics">
-        </idc-table>
+        <idc-table heading="Harmonic Interference" :data="bandsHarmonics" />
       </div>
       <div class="column">
-        <idc-table heading="IMD Interference" :data="bandsImd">
-        </idc-table>
+        <idc-table heading="IMD Interference" :data="bandsImd" />
       </div>
     </div>
     <div class="columns is-centered">
-      <button class="button is-success" v-on:click="save">
-        Save
-      </button>
+      <button class="button is-success" @click="save">Save</button>
     </div>
   </div>
 </template>

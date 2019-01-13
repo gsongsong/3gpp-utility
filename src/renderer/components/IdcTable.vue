@@ -1,8 +1,6 @@
 <template>
   <div class="panel">
-    <div class="panel-heading">
-      {{ heading }}
-    </div>
+    <div class="panel-heading">{{ heading }}</div>
     <div class="panel-block">
       <b-table class="table is-fullwidth" :columns="columns" :data="data">
         <template slot="empty">
@@ -13,9 +11,7 @@
           </section>
         </template>
         <template slot="footer">
-          <div class="has-text-right has-text-grey">
-            Frequency in MHz
-          </div>
+          <div class="has-text-right has-text-grey">Frequency in MHz</div>
         </template>
       </b-table>
     </div>
@@ -26,10 +22,12 @@
   export default {
     props: {
       heading: {
-        type: String
+        type: String,
+        default: 'Interference Table'
       },
       data: {
-        type: Array
+        type: Array,
+        default: []
       }
     },
     data () {
