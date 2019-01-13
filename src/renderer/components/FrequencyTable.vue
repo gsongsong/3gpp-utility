@@ -59,10 +59,10 @@
       }
     },
     methods: {
-      emitDataChanged: function () {
+      emitDataChanged () {
         this.$emit('data-changed', this.data.slice(0, this.data.length - 1))
       },
-      add: function () {
+      add () {
         if (this.nameTemp && this.fLowTemp && this.fHighTemp) {
           this.data.splice(this.data.length - 1, 0, {
             id: this.data.length - 1,
@@ -76,7 +76,7 @@
           this.emitDataChanged()
         }
       },
-      remove: function (id) {
+      remove (id) {
         let index = this.data.findIndex((row) => {
           return row.id === id
         })

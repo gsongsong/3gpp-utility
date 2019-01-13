@@ -66,7 +66,7 @@
       }
     },
     methods: {
-      checkSpecType: function (file, fileKey) {
+      checkSpecType (file, fileKey) {
         // File object: https://developer.mozilla.org/en-US/docs/Web/API/File
         // Electron adds `path` attribute: https://tinydew4.github.io/electron-ko/docs/api/file-object/
         let fs = require('fs')

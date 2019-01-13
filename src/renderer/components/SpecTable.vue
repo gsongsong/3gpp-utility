@@ -64,13 +64,13 @@
       }
     },
     methods: {
-      emitRemove: function () {
+      emitRemove () {
         this.$emit('remove')
       },
-      open: function (url) {
+      open (url) {
         shell.openExternal(url)
       },
-      getList: function (forced = false) {
+      getList (forced = false) {
         this.isWorking = true
         this.$emit('spec-list-updating')
         let timeDiffMs = new Date().getTime() - new Date(this.lastUpdate).getTime()
@@ -96,7 +96,7 @@
           this.$emit('spec-list-changed', list.slice(0, 3))
         })
       },
-      yyyyMmDd: function (dateString) {
+      yyyyMmDd (dateString) {
         let date = new Date(dateString)
         return `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
       }

@@ -40,18 +40,18 @@
       }
     },
     methods: {
-      emitDataChange: function () {
+      emitDataChange () {
         this.$emit('data-changed', {
           ratName: this.ratName,
           downlink: this.downlink,
           uplink: this.uplink
         })
       },
-      onRatNameChange: function () {
+      onRatNameChange () {
         this.isEditing = false
         this.emitDataChange()
       },
-      onDataChange: function (data, keyName) {
+      onDataChange (data, keyName) {
         this[keyName] = data
         this.emitDataChange()
       }

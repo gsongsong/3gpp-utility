@@ -25,7 +25,7 @@
   import { ipcRenderer } from 'electron'
   import SpecTable from './SpecTable'
 
-export default {
+  export default {
     name: 'home',
     components: { SpecTable },
     data () {
@@ -36,7 +36,7 @@ export default {
       }
     },
     methods: {
-      completedAll: function () {
+      completedAll () {
         for (let watchItem in this.watchList) {
           if (!this.watchList[watchItem].completed) {
             return false
@@ -44,7 +44,7 @@ export default {
           return true
         }
       },
-      add: function (specNumber) {
+      add (specNumber) {
         if (this.watchList[specNumber]) {
           return
         }
@@ -55,10 +55,10 @@ export default {
         })
         this.specNumber = ''
       },
-      working: function (specNumber) {
+      working (specNumber) {
         this.$set(this.watchList, specNumber, Object.assign(this.watchList[specNumber], {completed: false}))
       },
-      update: function (data, specNumber) {
+      update (data, specNumber) {
         if (data !== null) {
           this.$set(this.watchList, specNumber, {
             files: data,
@@ -70,11 +70,11 @@ export default {
           this.save()
         }
       },
-      remove: function (specNumber) {
+      remove (specNumber) {
         this.$delete(this.watchList, specNumber)
         this.save()
       },
-      save: function () {
+      save () {
         if (this.completedAll()) {
           writeFileSync(this.watchListFilePath, JSON.stringify(this.watchList))
         }

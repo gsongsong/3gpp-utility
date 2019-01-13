@@ -55,14 +55,14 @@
       }
     },
     computed: {
-      filteredMsgIeList: function () {
+      filteredMsgIeList () {
         return this.msgIeList.filter((msgIeName) => {
           return msgIeName.toLowerCase().indexOf(this.msgIeName.toLowerCase()) >= 0
         })
       }
     },
     methods: {
-      checkSpecType: function (file) {
+      checkSpecType (file) {
         this.isWorking = true
         // File object: https://developer.mozilla.org/en-US/docs/Web/API/File
         // Electron adds `path` attribute: https://tinydew4.github.io/electron-ko/docs/api/file-object/
@@ -88,7 +88,7 @@
         }
         ipcRenderer.send('ie-list-request', JSON.stringify(data))
       },
-      format: function (msgIeName) {
+      format (msgIeName) {
         this.isWorking = true
         if (msgIeName === '__all') {
           this.msgIeName = null

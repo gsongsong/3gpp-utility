@@ -108,7 +108,7 @@
         }
         return freqs
       },
-      calculate: function () {
+      calculate () {
         this.isWorking = true
         ipcRenderer.send('idc-request', JSON.stringify({
           rat1Dl: this.rat1.downlink,
@@ -119,7 +119,7 @@
           orderImd: this.orderImd
         }))
       },
-      onDataChange: function (data, freqTableName) {
+      onDataChange (data, freqTableName) {
         this[freqTableName] = data
       },
       drawTableBorder (ws, rowStart, colStart, numRows, numCols) {
@@ -174,7 +174,7 @@
           ws.cell(row, col++).string(freq.victim)
         }
       },
-      save: function () {
+      save () {
         if (!this.bandsHarmonics.length && !this.bandsImd.length) {
           return
         }
