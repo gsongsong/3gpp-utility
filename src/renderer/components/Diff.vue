@@ -27,10 +27,10 @@
     <b-field label="Comparison mode" />
     <b-field>
       <b-radio-button v-model="comparisonMode" native-value="line-by-line" type="is-success">
-        <span>line-by-line</span>
+        line-by-line
       </b-radio-button>
       <b-radio-button v-model="comparisonMode" native-value="side-by-side" type="is-success">
-        <span>side-by-side</span>
+        side-by-side
       </b-radio-button>
     </b-field>
     <b-tooltip label="RRC Protocol only" position="is-right" type="is-info">
