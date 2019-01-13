@@ -4,7 +4,8 @@
       <span v-if="!isEditing" v-on:click="isEditing = true">
         {{ ratName }}
       </span>
-      <b-input v-model="ratName" v-if="isEditing" v-on:blur="onRatNameChange"></b-input>
+      <b-input v-model="ratName" v-if="isEditing" v-on:blur="onRatNameChange"
+        v-on:keyup.native.enter="onRatNameChange"></b-input>
     </div>
     <div class="panel-block">
       <div class="columns">
