@@ -1,12 +1,11 @@
 <template>
-  <nav class="navbar is-success" role="navigation" aria-label="main navigation">
+  <nav class="navbar is-success" role="navigation">
     <div class="navbar-brand">
       <router-link to="/" class="navbar-item">3GPP</router-link>
-      <a role="button" class="navbar-burger burger" aria-label="menu" aria-expanded="false"
-         data-target="navbar-main">
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
-        <span aria-hidden="true"></span>
+      <a role="button" class="navbar-burger burger" data-target="navbar-main">
+        <span></span>
+        <span></span>
+        <span></span>
       </a>
     </div>
     <div id="navbar-main" class="navbar-menu">
