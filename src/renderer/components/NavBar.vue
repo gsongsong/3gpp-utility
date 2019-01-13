@@ -3,9 +3,9 @@
     <div class="navbar-brand">
       <router-link to="/" class="navbar-item">3GPP</router-link>
       <a role="button" class="navbar-burger burger" data-target="navbar-main">
-        <span></span>
-        <span></span>
-        <span></span>
+        <span />
+        <span />
+        <span />
       </a>
     </div>
     <div id="navbar-main" class="navbar-menu">
