@@ -28,13 +28,14 @@
   export default {
     components: { FrequencyTable },
     props: {
-      ratName: {
+      ratNameInitial: {
         type: String,
         default: 'RAT'
       }
     },
     data () {
       return {
+        ratName: '',
         isEditingRatName: false,
         downlink: [],
         uplink: []
@@ -56,6 +57,9 @@
         this[keyName] = data
         this.emitDataChange()
       }
+    },
+    mounted () {
+      this.ratName = this.ratNameInitial
     }
   }
 </script>
