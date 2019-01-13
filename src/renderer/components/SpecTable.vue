@@ -10,7 +10,7 @@
         </a>
       </p>
       <p class="card-header-icon">
-        <a v-on:click="emitRemove()" class="has-text-danger">
+        <a v-on:click="$emit('remove')" class="has-text-danger">
           <font-awesome-icon icon="times"></font-awesome-icon>
         </a>
       </p>
@@ -55,7 +55,7 @@
       },
       lastUpdate: {
         type: Date,
-        default: new Date()
+        default: null // 1970-01-01
       }
     },
     data () {
@@ -64,9 +64,6 @@
       }
     },
     methods: {
-      emitRemove () {
-        this.$emit('remove')
-      },
       open (url) {
         shell.openExternal(url)
       },
