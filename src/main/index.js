@@ -1,7 +1,5 @@
 'use strict'
 
-import { existsSync, mkdirSync, writeFileSync } from 'fs'
-import { join } from 'path'
 import { app, BrowserWindow, ipcMain } from 'electron'
 
 /**
@@ -38,19 +36,6 @@ function createWindow () {
 
   ipcMain.on('worker-ready', (event, data) => {
     mainWindow.loadURL(winURL)
-  })
-
-  ipcMain.on('specWatchDog-ready', (event, data) => {
-    let appPath = app.getPath('home')
-    let appDir = join(appPath, '.3gpp-electron')
-    if (!existsSync(appDir)) {
-      mkdirSync(appDir)
-    }
-    let specWatchListFilePath = join(appDir, 'specWatchList.json')
-    if (!existsSync(specWatchListFilePath)) {
-      writeFileSync(specWatchListFilePath, JSON.stringify({}))
-    }
-    event.sender.send('specWatchDog-filePath', JSON.stringify(specWatchListFilePath))
   })
 
   ipcMain.on('ie-list-request', (event, data) => {
