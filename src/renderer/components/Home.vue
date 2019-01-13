@@ -2,9 +2,9 @@
   <div>
     <div class="section">
       <b-field>
-        <b-input v-model="specNumber" placeholder="Spec number" v-on:keyup.native.enter="add(specNumber)"></b-input>
+        <b-input v-model="specNumber" placeholder="Spec number" @keyup.native.enter="add(specNumber)" />
         <p class="control">
-          <button class="button is-success" v-on:click="add(specNumber)" :disabled="!specNumber">
+          <button class="button is-success" @click="add(specNumber)" :disabled="!specNumber">
             Add to watch list
           </button>
         </p>
@@ -13,8 +13,8 @@
     <div id="specWatchListWrapper" class="section columns">
       <div v-for="(data, sn) in watchList" v-bind:key="sn" class="column is-one-third">
         <spec-table :heading="sn" :data="data.files" :lastUpdate="new Date(data.lastUpdate)"
-          v-on:spec-list-changed="update($event, sn)" v-on:remove="remove(sn)"
-          v-on:spec-list-updating="working(sn)"></spec-table>
+          @spec-list-updating="working(sn)" @spec-list-change="update($event, sn)"
+          @remove="remove(sn)" />
       </div>
     </div>
   </div>
@@ -42,8 +42,8 @@
           if (!this.watchList[watchItem].completed) {
             return false
           }
-          return true
         }
+        return true
       },
       add (specNumber) {
         if (this.watchList[specNumber]) {
@@ -67,9 +67,7 @@
           })
         }
         this.$set(this.watchList, specNumber, Object.assign(this.watchList[specNumber], {completed: true}))
-        if (data !== null) {
-          this.save()
-        }
+        this.save()
       },
       remove (specNumber) {
         this.$delete(this.watchList, specNumber)
