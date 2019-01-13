@@ -33,6 +33,8 @@
 </template>
 
 <script>
+  import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
+  import { join } from 'path'
   import * as request from 'request'
   import { parse } from 'url'
   import * as urlJoin from 'url-join'
@@ -64,45 +66,65 @@
     data () {
       return {
         version: remote.app.getVersion(),
-        newVersionAvailable: false
+        newVersionAvailable: false,
+        lastVersionCheck: {}
       }
     },
     methods: {
       openRelease () {
         shell.openExternal(urlJoin(repository.url, 'releases/latest'))
+      },
+      checkVersion () {
+        let appPath = remote.app.getPath('home')
+        let appDir = join(appPath, '.3gpp-electron')
+        if (!existsSync(appDir)) {
+          mkdirSync(appDir)
+        }
+        this.lastVersionCheckFilePath = join(appDir, 'lastVersionCheck.json')
+        if (!existsSync(this.lastVersionCheckFilePath)) {
+          writeFileSync(this.lastVersionCheckFilePath, JSON.stringify({}))
+        }
+        this.lastVersionCheck = JSON.parse(readFileSync(this.lastVersionCheckFilePath, 'utf8'))
+        let timeDiffMs = new Date().getTime() - new Date(this.lastVersionCheck.date || null).getTime()
+        if (timeDiffMs / 1000 / 60 / 60 / 24 < 1) {
+          return
+        }
+        const urlObj = parse(repository.url)
+        const apiReleasesUrl = urlJoin(urlObj.protocol, 'api.github.com', 'repos', urlObj.path, 'releases/latest')
+        const headers = {
+          'User-Agent': 'gsongsong/3gpp-electron',
+          'Authorization': 'token 5c68b07d9bd331aef636501c0ff8172a495a30d6'
+        }
+        request({url: apiReleasesUrl, headers: headers},
+          (e, res, body) => {
+            let json = {}
+            try {
+              json = JSON.parse(body)
+            } catch (e) {
+              return
+            }
+            this.lastVersionCheck.date = new Date()
+            writeFileSync(this.lastVersionCheckFilePath, JSON.stringify(this.lastVersionCheck))
+            if (!('tag_name' in json)) {
+              return
+            }
+            const tagName = json.tag_name
+            const last = tagName.substring(1).split('.').map(el => Number(el))
+            const curr = this.version.split('.').map(el => Number(el))
+            for (let i = 0; i < last.length; i++) {
+              if (last[i] > curr[i]) {
+                this.newVersionAvailable = true
+              } else if (last[i] === curr[i]) {
+                continue
+              } else {
+                break
+              }
+            }
+          })
       }
     },
     mounted () {
-      const urlObj = parse(repository.url)
-      const apiReleasesUrl = urlJoin(urlObj.protocol, 'api.github.com', 'repos', urlObj.path, 'releases/latest')
-      const headers = {
-        'User-Agent': 'gsongsong/3gpp-electron',
-        'Authorization': 'token 5c68b07d9bd331aef636501c0ff8172a495a30d6'
-      }
-      request({url: apiReleasesUrl, headers: headers},
-        (e, res, body) => {
-          let json = {}
-          try {
-            json = JSON.parse(body)
-          } catch (e) {
-            return
-          }
-          if (!('tag_name' in json)) {
-            return
-          }
-          const tagName = json.tag_name
-          const last = tagName.substring(1).split('.').map(el => Number(el))
-          const curr = this.version.split('.').map(el => Number(el))
-          for (let i = 0; i < last.length; i++) {
-            if (last[i] > curr[i]) {
-              this.newVersionAvailable = true
-            } else if (last[i] === curr[i]) {
-              continue
-            } else {
-              break
-            }
-          }
-        })
+      this.checkVersion()
     }
   }
 </script>
