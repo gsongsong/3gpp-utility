@@ -110,7 +110,8 @@
       }
     },
     mounted () {
-      ipcRenderer.removeAllListeners('ie-list-response', 'format-response')
+      ipcRenderer.removeAllListeners('ie-list-response')
+      ipcRenderer.removeAllListeners('format-response')
       ipcRenderer.on('ie-list-response', (event, data) => {
         let result = JSON.parse(data)
         if (result.error) {
