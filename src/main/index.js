@@ -1,6 +1,12 @@
 'use strict'
 
+import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
+import { join } from 'path'
+import * as request from 'request'
+import { parse } from 'url'
+import * as urlJoin from 'url-join'
 import { app, BrowserWindow, ipcMain } from 'electron'
+import { repository } from '../../package.json'
 
 /**
  * Set `__static` path to static files in production
@@ -34,6 +40,12 @@ function createWindow () {
 
   ipcMain.on('worker-ready', (event, data) => {
     mainWindow.loadURL(winURL)
+  })
+
+  ipcMain.on('version-check-request', (event, data) => {
+    if (event.sender === mainWindow.webContents) {
+      checkVersion(event)
+    }
   })
 
   ipcMain.on('ie-list-request', (event, data) => {
@@ -106,3 +118,54 @@ app.on('ready', () => {
   if (process.env.NODE_ENV === 'production') autoUpdater.checkForUpdates()
 })
  */
+
+function checkVersion (event) {
+  let version = app.getVersion()
+  let appPath = app.getPath('home')
+  let appDir = join(appPath, '.3gpp-electron')
+  if (!existsSync(appDir)) {
+    mkdirSync(appDir)
+  }
+  let lastVersionCheckFilePath = join(appDir, 'lastVersionCheck.json')
+  if (!existsSync(lastVersionCheckFilePath)) {
+    writeFileSync(lastVersionCheckFilePath, JSON.stringify({}))
+  }
+  let lastVersionCheck = JSON.parse(readFileSync(lastVersionCheckFilePath, 'utf8'))
+  let timeDiffMs = new Date().getTime() - new Date(lastVersionCheck.date || null).getTime()
+  if (timeDiffMs / 1000 / 60 / 60 / 24 < 1) {
+    return
+  }
+  const urlObj = parse(repository.url)
+  const apiReleasesUrl = urlJoin(urlObj.protocol, 'api.github.com', 'repos', urlObj.path, 'releases/latest')
+  const headers = {
+    'User-Agent': 'gsongsong/3gpp-electron',
+    'Authorization': 'token 5c68b07d9bd331aef636501c0ff8172a495a30d6'
+  }
+  request({url: apiReleasesUrl, headers: headers},
+    (e, res, body) => {
+      let json = {}
+      try {
+        json = JSON.parse(body)
+      } catch (e) {
+        return
+      }
+      lastVersionCheck.date = new Date()
+      writeFileSync(lastVersionCheckFilePath, JSON.stringify(lastVersionCheck))
+      if (!('tag_name' in json)) {
+        return
+      }
+      const tagName = json.tag_name
+      const last = tagName.substring(1).split('.').map(el => Number(el))
+      const curr = version.split('.').map(el => Number(el))
+      for (let i = 0; i < last.length; i++) {
+        if (last[i] > curr[i]) {
+          event.sender.send('new-version-available')
+          return
+        } else if (last[i] === curr[i]) {
+          continue
+        } else {
+          return
+        }
+      }
+    })
+}
