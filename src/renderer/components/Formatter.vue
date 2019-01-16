@@ -98,7 +98,7 @@
       format (msgIeName) {
         this.isWorking = true
         if (msgIeName === '__all') {
-          this.msgIeName = null
+          this.msgIeName = ''
         }
         let data = {
           filePath: this.file.path,
