@@ -60,6 +60,14 @@ function createWindow () {
     workerWindow.webContents.send('format-request', data)
   })
 
+  ipcMain.on('format-path-request', (event, data) => {
+    mainWindow.webContents.send('format-path-request')
+  })
+
+  ipcMain.on('format-path-response', (event, data) => {
+    workerWindow.webContents.send('format-path-response', data)
+  })
+
   ipcMain.on('format-response', (event, data) => {
     mainWindow.webContents.send('format-response', data)
   })

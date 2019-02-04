@@ -47,7 +47,6 @@
 <script>
   import { parse } from 'path'
   import { ipcRenderer, remote, shell } from 'electron'
-  import * as xlsx from '@gsongsong/xlsx'
 
   export default {
     data () {
@@ -111,6 +110,7 @@
     },
     mounted () {
       ipcRenderer.removeAllListeners('ie-list-response')
+      ipcRenderer.removeAllListeners('format-path-request')
       ipcRenderer.removeAllListeners('format-response')
       ipcRenderer.on('ie-list-response', (event, data) => {
         let result = JSON.parse(data)
@@ -128,6 +128,28 @@
           this.isWorking = false
         }
       })
+      ipcRenderer.on('format-path-request', (event, data) => {
+        let pathParsed = parse(this.file.path)
+        let defaultPathDir = this.defaultPathDir ? this.defaultPathDir : pathParsed.dir
+        let msgIeName = this.msgIeName ? `${this.msgIeName}-` : ''
+        let raw = this.doNotExpand.length ? '-raw' : ''
+        let savePath = remote.dialog.showSaveDialog({
+          defaultPath: `${defaultPathDir}/${msgIeName}${pathParsed.name}${raw}.xlsx`
+        })
+        if (savePath) {
+          this.defaultPathDir = parse(savePath).dir
+          event.sender.send('format-path-response', JSON.stringify({filePath: savePath}))
+        } else {
+          this.$snackbar.open({
+            message: 'Save aborted',
+            type: 'is-warning',
+            position: 'is-bottom-right',
+            actionText: 'Dismiss',
+            duration: 3 * 1000,
+            queue: false
+          })
+        }
+      })
       ipcRenderer.on('format-response', (event, data) => {
         let result = JSON.parse(data)
         if (result.error) {
@@ -140,48 +162,17 @@
             queue: false
           })
         } else {
-          let pathParsed = parse(this.file.path)
-          let defaultPathDir = this.defaultPathDir ? this.defaultPathDir : pathParsed.dir
-          let msgIeName = this.msgIeName ? `${this.msgIeName}-` : ''
-          let raw = this.doNotExpand.length ? '-raw' : ''
-          let savePath = remote.dialog.showSaveDialog({
-            defaultPath: `${defaultPathDir}/${msgIeName}${pathParsed.name}${raw}.xlsx`
-          })
-          if (savePath) {
-            try {
-              this.defaultPathDir = parse(savePath).dir
-              xlsx.writeFile(result, savePath)
-              this.$snackbar.open({
-                message: 'Formatting success',
-                type: 'is-success',
-                position: 'is-bottom-right',
-                actionText: 'Open folder',
-                duration: 10 * 1000,
-                queue: false,
-                onAction: () => {
-                  shell.openExternal(this.defaultPathDir)
-                }
-              })
-            } catch (e) {
-              this.$snackbar.open({
-                message: e,
-                type: 'is-warning',
-                position: 'is-bottom-right',
-                actionText: 'Dismiss',
-                indefinite: true,
-                queue: false
-              })
+          this.$snackbar.open({
+            message: 'Formatting success',
+            type: 'is-success',
+            position: 'is-bottom-right',
+            actionText: 'Open folder',
+            duration: 10 * 1000,
+            queue: false,
+            onAction: () => {
+              shell.openExternal(this.defaultPathDir)
             }
-          } else {
-            this.$snackbar.open({
-              message: 'Save aborted',
-              type: 'is-warning',
-              position: 'is-bottom-right',
-              actionText: 'Dismiss',
-              duration: 3 * 1000,
-              queue: false
-            })
-          }
+          })
         }
         this.isWorking = false
       })

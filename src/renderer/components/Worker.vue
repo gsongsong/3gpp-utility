@@ -18,6 +18,11 @@
   import { Band, calculateHarmonics, calculateIMD } from 'third-gen-distortion-calculator'
 
   export default {
+    data () {
+      return {
+        formatted: {}
+      }
+    },
     methods: {
       convertRatTableToBands (rat) {
         for (let i = 0; i < rat.length; i++) {
@@ -54,21 +59,29 @@
       })
       ipcRenderer.on('format-request', (event, data/* filePath, specType, msgIeName, doNotExpand */) => {
         let {filePath, specType, msgIeName, raw} = JSON.parse(data)
-        let result = {}
         try {
           if (specType === 'RRC Protocol') {
             let text = extractRan2(readFileSync(filePath, 'utf8'))
             let asn1Json = parseRan2(text)
-            result = formatRan2(msgIeName, asn1Json, raw)
+            this.formatted = formatRan2(msgIeName, asn1Json, raw)
           } else if (specType === 'Application Protocol') {
             let html = readFileSync(filePath, 'utf8')
             let definitions = parseRan3(html)
-            result = formatRan3(msgIeName, definitions, raw)
+            this.formatted = formatRan3(msgIeName, definitions, raw)
           }
+          event.sender.send('format-path-request')
         } catch (e) {
-          result = {error: e}
+          event.sender.send('format-response', JSON.stringify({error: e}))
         }
-        event.sender.send('format-response', JSON.stringify(result))
+      })
+      ipcRenderer.on('format-path-response', (event, data) => {
+        let { filePath } = JSON.parse(data)
+        try {
+          this.formatted.write(filePath)
+          event.sender.send('format-response', JSON.stringify({success: true}))
+        } catch (e) {
+          event.sender.send('format-response', JSON.stringify({error: e}))
+        }
       })
       ipcRenderer.on('idc-request', (event, data) => {
         let { rat1Dl, rat1Ul, rat2Dl, rat2Ul, orderHarmonics, orderImd } = JSON.parse(data)
