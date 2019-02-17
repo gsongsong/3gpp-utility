@@ -77,8 +77,13 @@
       ipcRenderer.on('format-path-response', (event, data) => {
         let { filePath } = JSON.parse(data)
         try {
-          this.formatted.write(filePath)
-          event.sender.send('format-response', JSON.stringify({success: true}))
+          this.formatted.write(filePath, (err, stats) => {
+            if (err) {
+              event.sender.send('format-response', JSON.stringify({error: err}))
+            } else {
+              event.sender.send('format-response', JSON.stringify({success: true}))
+            }
+          })
         } catch (e) {
           event.sender.send('format-response', JSON.stringify({error: e}))
         }
