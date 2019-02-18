@@ -140,6 +140,7 @@
           this.defaultPathDir = parse(savePath).dir
           event.sender.send('format-path-response', JSON.stringify({filePath: savePath}))
         } else {
+          this.isWorking = false
           this.$snackbar.open({
             message: 'Save aborted',
             type: 'is-warning',
