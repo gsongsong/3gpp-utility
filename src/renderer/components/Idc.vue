@@ -47,7 +47,6 @@
 </template>
 
 <script>
-  import { parse } from 'path'
   import { ipcRenderer, remote, shell } from 'electron'
   import * as xl from 'excel4node'
 
@@ -208,7 +207,7 @@
               duration: 10 * 1000,
               queue: false,
               onAction: () => {
-                shell.openExternal(parse(savePath).dir)
+                shell.showItemInFolder(savePath)
               }
             })
           })

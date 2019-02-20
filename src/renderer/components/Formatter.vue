@@ -57,7 +57,7 @@
         msgIeList: [],
         doNotExpand: [],
         isWorking: false,
-        defaultPathDir: null
+        savePath: null
       }
     },
     computed: {
@@ -130,14 +130,14 @@
       })
       ipcRenderer.on('format-path-request', (event, data) => {
         let pathParsed = parse(this.file.path)
-        let defaultPathDir = this.defaultPathDir ? this.defaultPathDir : pathParsed.dir
+        let defaultPathDir = this.savePath ? parse(this.savePath).dir : pathParsed.dir
         let msgIeName = this.msgIeName ? `${this.msgIeName}-` : ''
         let raw = this.doNotExpand.length ? '-raw' : ''
         let savePath = remote.dialog.showSaveDialog({
           defaultPath: `${defaultPathDir}/${msgIeName}${pathParsed.name}${raw}.xlsx`
         })
         if (savePath) {
-          this.defaultPathDir = parse(savePath).dir
+          this.savePath = savePath
           event.sender.send('format-path-response', JSON.stringify({filePath: savePath}))
         } else {
           this.isWorking = false
@@ -171,7 +171,7 @@
             duration: 10 * 1000,
             queue: false,
             onAction: () => {
-              shell.openExternal(this.defaultPathDir)
+              shell.showItemInFolder(this.savePath)
             }
           })
         }

@@ -116,7 +116,7 @@
                 duration: 10 * 1000,
                 queue: false,
                 onAction: () => {
-                  shell.openExternal(parse(savePath).dir)
+                  shell.showItemInFolder(savePath)
                 }
               })
             } catch (e) {
