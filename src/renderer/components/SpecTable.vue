@@ -41,7 +41,7 @@
 
 <script>
   import { shell } from 'electron'
-  import { GetList } from 'third-gen-spec-list'
+  import { GetList } from 'third-gen-web-util'
 
   export default {
     props: {
