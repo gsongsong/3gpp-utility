@@ -73,6 +73,7 @@
     "@fortawesome/free-solid-svg-icons": "^5.7.1",
     "@fortawesome/vue-fontawesome": "^0.1.5",
     "@gsongsong/xlsx": "^0.13.4",
+    "@toast-ui/vue-calendar": "^1.0.3",
     "axios": "^0.18.0",
     "buefy": "^0.7.2",
     "bulma": "^0.7.4",
