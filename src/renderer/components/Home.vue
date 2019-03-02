@@ -21,7 +21,7 @@
 </template>
 
 <script>
-  import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
+  import { existsSync, readFileSync, writeFileSync } from 'fs'
   import { join } from 'path'
   import { remote } from 'electron'
   import SpecTable from './SpecTable'
@@ -82,9 +82,6 @@
     mounted () {
       let appPath = remote.app.getPath('home')
       let appDir = join(appPath, '.3gpp-electron')
-      if (!existsSync(appDir)) {
-        mkdirSync(appDir)
-      }
       this.watchListFilePath = join(appDir, 'specWatchList.json')
       if (!existsSync(this.watchListFilePath)) {
         writeFileSync(this.watchListFilePath, JSON.stringify({}))

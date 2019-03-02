@@ -39,6 +39,11 @@ function createWindow () {
   })
 
   ipcMain.on('worker-ready', (event, data) => {
+    let appPath = app.getPath('home')
+    let appDir = join(appPath, '.3gpp-electron')
+    if (!existsSync(appDir)) {
+      mkdirSync(appDir)
+    }
     mainWindow.loadURL(winURL)
   })
 

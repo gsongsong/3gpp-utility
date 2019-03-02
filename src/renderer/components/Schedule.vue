@@ -121,7 +121,7 @@
         this.$refs.tuiCalendar.invoke('setDate', date)
         this.updateYearMonth()
       },
-      updateCalendar(data) {
+      updateCalendar (data) {
         let schedules = []
         for (let key in data) {
           let schedule = {
@@ -167,7 +167,7 @@
           return
         }
         data.lastUpdate = new Date()
-        updateCalendar(data)
+        this.updateCalendar(data)
         this.isWorking = false
       })
     }
