@@ -1,7 +1,7 @@
 <template>
   <nav class="navbar is-success" role="navigation">
     <div class="navbar-brand">
-      <router-link to="/" class="navbar-item">3GPP</router-link>
+      <span class="navbar-item">3GPP Utilities</span>
       <a role="button" class="navbar-burger burger" data-target="navbar-main">
         <span />
         <span />
@@ -10,7 +10,15 @@
     </div>
     <div id="navbar-main" class="navbar-menu">
       <div class="navbar-start">
-        <router-link to="/" class="navbar-item">Home</router-link>
+        <div class="navbar-item has-dropdown is-hoverable">
+          <a class="navbar-link">Standardization</a>
+
+          <div class="navbar-dropdown">
+            <router-link to="/" class="navbar-item">Specification</router-link>
+            <router-link to="/schedule" class="navbar-item">Schedule</router-link>
+          </div>
+        </div>
+
         <div class="navbar-item has-dropdown is-hoverable">
           <a class="navbar-link">Message/IE</a>
 
