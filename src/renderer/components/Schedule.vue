@@ -39,6 +39,9 @@
 </template>
 
 <script>
+  import { existsSync, readFileSync, writeFileSync } from 'fs'
+  import { join } from 'path'
+  import { remote } from 'electron'
   import 'tui-calendar/dist/tui-calendar.css'
   import { Calendar } from '@toast-ui/vue-calendar'
   import { GetCalendar } from 'third-gen-web-util'
@@ -74,7 +77,7 @@
         },
         month: {
           visibleWeeksCount: 4,
-          startDayOfWeek: 1
+          startDayOfWeek: 0
         },
         timezones: [{
           timezoneOffset: 540,
@@ -117,9 +120,32 @@
         date.setMonth(date.getMonth() + deltaMonth)
         this.$refs.tuiCalendar.invoke('setDate', date)
         this.updateYearMonth()
+      },
+      updateCalendar(data) {
+        let schedules = []
+        for (let key in data) {
+          let schedule = {
+            id: key,
+            calendarId: '0',
+            title: data[key].summary,
+            category: 'time',
+            dueDateClass: '',
+            start: data[key].start,
+            end: data[key].end
+          }
+          schedules.push(schedule)
+        }
+        this.$refs.tuiCalendar.invoke('createSchedules', schedules)
       }
     },
     mounted () {
+      let appPath = remote.app.getPath('home')
+      let appDir = join(appPath, '.3gpp-electron')
+      this.watchListFilePath = join(appDir, 'meetingSchedules.json')
+      if (!existsSync(this.watchListFilePath)) {
+        writeFileSync(this.watchListFilePath, JSON.stringify({}))
+      }
+      this.watchList = JSON.parse(readFileSync(this.watchListFilePath, 'utf8'))
       this.updateYearMonth()
       this.isWorking = true
       this.$refs.tuiCalendar.invoke('setCalendarColor', '0', {
@@ -140,20 +166,8 @@
           })
           return
         }
-        let schedules = []
-        for (let key in data) {
-          let schedule = {
-            id: key,
-            calendarId: '0',
-            title: data[key].summary,
-            category: 'time',
-            dueDateClass: '',
-            start: data[key].start,
-            end: data[key].end
-          }
-          schedules.push(schedule)
-        }
-        this.$refs.tuiCalendar.invoke('createSchedules', schedules)
+        data.lastUpdate = new Date()
+        updateCalendar(data)
         this.isWorking = false
       })
     }
