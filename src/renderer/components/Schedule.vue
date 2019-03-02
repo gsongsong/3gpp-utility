@@ -101,7 +101,8 @@
         useCreationPopup: true,
         useDetailPopup: false,
         yearMonth: '',
-        isWorking: false
+        isWorking: false,
+        meetingSchedulePath: ''
       }
     },
     computed: {
@@ -121,6 +122,26 @@
         this.$refs.tuiCalendar.invoke('setDate', date)
         this.updateYearMonth()
       },
+      getCalendar (tsgName) {
+        GetCalendar('RAN', (err, data) => {
+          if (err) {
+            this.isWorking = false
+            this.$snackbar.open({
+              message: 'Failed to retrieve TSG meeting schedule',
+              type: 'is-warning',
+              position: 'is-bottom-right',
+              actionText: 'Dismiss',
+              indefinite: true,
+              queue: false
+            })
+            return
+          }
+          data.lastUpdate = new Date()
+          this.updateCalendar(data)
+          writeFileSync(this.meetingSchedulePath, JSON.stringify(data))
+          this.isWorking = false
+        })
+      },
       updateCalendar (data) {
         let schedules = []
         for (let key in data) {
@@ -139,37 +160,27 @@
       }
     },
     mounted () {
-      let appPath = remote.app.getPath('home')
-      let appDir = join(appPath, '.3gpp-electron')
-      this.watchListFilePath = join(appDir, 'meetingSchedules.json')
-      if (!existsSync(this.watchListFilePath)) {
-        writeFileSync(this.watchListFilePath, JSON.stringify({}))
-      }
-      this.watchList = JSON.parse(readFileSync(this.watchListFilePath, 'utf8'))
-      this.updateYearMonth()
       this.isWorking = true
+      this.updateYearMonth()
       this.$refs.tuiCalendar.invoke('setCalendarColor', '0', {
         color: '#FFFFFF',
         bgColor: '#23D160',
         borderColor: '#23D160'
       })
-      GetCalendar('RAN', (err, data) => {
-        if (err) {
-          this.isWorking = false
-          this.$snackbar.open({
-            message: 'Failed to retrieve TSG meeting schedule',
-            type: 'is-warning',
-            position: 'is-bottom-right',
-            actionText: 'Dismiss',
-            indefinite: true,
-            queue: false
-          })
-          return
-        }
-        data.lastUpdate = new Date()
-        this.updateCalendar(data)
+      let appPath = remote.app.getPath('home')
+      let appDir = join(appPath, '.3gpp-electron')
+      this.meetingSchedulePath = join(appDir, 'meetingSchedules.json')
+      if (!existsSync(this.meetingSchedulePath)) {
+        return this.getCalendar('RAN')
+      }
+      let meetingSchedule = JSON.parse(readFileSync(this.meetingSchedulePath, 'utf8'))
+      let timeDiffMs = new Date().getTime() - new Date(meetingSchedule.lastUpdate).getTime()
+      if (timeDiffMs / 1000 / 60 / 60 / 24 < 30) {
+        this.updateCalendar(meetingSchedule)
         this.isWorking = false
-      })
+        return
+      }
+      this.getCalendar('RAN')
     }
   }
 </script>
