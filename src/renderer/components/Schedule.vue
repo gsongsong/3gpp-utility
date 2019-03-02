@@ -34,14 +34,14 @@
       :useCreationPopup="useCreationPopup"
       :useDetailPopup="useDetailPopup"
     />
-    <div>
-    </div>
+    <b-loading :active.sync="isWorking" :is-full-page="true" />
   </div>
 </template>
 
 <script>
   import 'tui-calendar/dist/tui-calendar.css'
   import { Calendar } from '@toast-ui/vue-calendar'
+  import { GetCalendar } from 'third-gen-web-util'
 
   export default {
     name: 'schedule',
@@ -51,32 +51,10 @@
         calendarList: [
           {
             id: '0',
-            name: 'home'
-          },
-          {
-            id: '1',
-            name: 'office'
+            name: 'RAN'
           }
         ],
         scheduleList: [
-          {
-            id: '1',
-            calendarId: '1',
-            title: 'my schedule',
-            category: 'time',
-            dueDateClass: '',
-            start: '2018-10-18T22:30:00+09:00',
-            end: '2018-10-19T02:30:00+09:00'
-          },
-          {
-            id: '2',
-            calendarId: '1',
-            title: 'second schedule',
-            category: 'time',
-            dueDateClass: '',
-            start: '2018-10-18T17:30:00+09:00',
-            end: '2018-10-19T17:31:00+09:00'
-          }
         ],
         view: 'month',
         taskView: false,
@@ -119,7 +97,8 @@
         },
         useCreationPopup: true,
         useDetailPopup: false,
-        yearMonth: ''
+        yearMonth: '',
+        isWorking: false
       }
     },
     computed: {
@@ -142,6 +121,41 @@
     },
     mounted () {
       this.updateYearMonth()
+      this.isWorking = true
+      this.$refs.tuiCalendar.invoke('setCalendarColor', '0', {
+        color: '#FFFFFF',
+        bgColor: '#23D160',
+        borderColor: '#23D160'
+      })
+      GetCalendar('RAN', (err, data) => {
+        if (err) {
+          this.isWorking = false
+          this.$snackbar.open({
+            message: 'Failed to retrieve TSG meeting schedule',
+            type: 'is-warning',
+            position: 'is-bottom-right',
+            actionText: 'Dismiss',
+            indefinite: true,
+            queue: false
+          })
+          return
+        }
+        let schedules = []
+        for (let key in data) {
+          let schedule = {
+            id: key,
+            calendarId: '0',
+            title: data[key].summary,
+            category: 'time',
+            dueDateClass: '',
+            start: data[key].start,
+            end: data[key].end
+          }
+          schedules.push(schedule)
+        }
+        this.$refs.tuiCalendar.invoke('createSchedules', schedules)
+        this.isWorking = false
+      })
     }
   }
 </script>
