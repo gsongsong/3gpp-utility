@@ -11,9 +11,9 @@ export default new Router({
       component: require('@/components/Home').default
     },
     {
-      path: '/schedule',
-      name: 'schedule',
-      component: require('@/components/Schedule').default
+      path: '/meeting',
+      name: 'meeting',
+      component: require('@/components/Meeting').default
     },
     {
       path: '/formatter',

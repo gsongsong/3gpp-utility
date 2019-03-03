@@ -15,7 +15,7 @@
 
           <div class="navbar-dropdown">
             <router-link to="/" class="navbar-item">Specification</router-link>
-            <router-link to="/schedule" class="navbar-item">Schedule</router-link>
+            <router-link to="/meeting" class="navbar-item">Meeting</router-link>
           </div>
         </div>
 
