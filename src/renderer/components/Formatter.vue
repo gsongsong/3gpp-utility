@@ -125,8 +125,8 @@
           })
         } else {
           this.msgIeList = result.msgIeList
-          this.isWorking = false
         }
+        this.isWorking = false
       })
       ipcRenderer.on('format-path-request', (event, data) => {
         let pathParsed = parse(this.file.path)
