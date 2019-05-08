@@ -64,6 +64,10 @@
       checkSpecType (file, fileKey) {
         // File object: https://developer.mozilla.org/en-US/docs/Web/API/File
         // Electron adds `path` attribute: https://tinydew4.github.io/electron-ko/docs/api/file-object/
+        if (!file) {
+          this[fileKey] = 'Unknown'
+          return
+        }
         let fs = require('fs')
         let content = fs.readFileSync(file.path, 'utf8')
         let indexRrc = content.indexOf('Radio Resource Control')
