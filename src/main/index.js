@@ -6,7 +6,7 @@ import * as request from 'request'
 import { parse } from 'url'
 import * as urlJoin from 'url-join'
 import { app, BrowserWindow, ipcMain } from 'electron'
-import { repository } from '../../package.json'
+import { repository, version } from '../../package.json'
 
 /**
  * Set `__static` path to static files in production
@@ -133,7 +133,6 @@ app.on('ready', () => {
  */
 
 function checkVersion (event) {
-  let version = app.getVersion()
   let appPath = app.getPath('home')
   let appDir = join(appPath, '.3gpp-electron')
   if (!existsSync(appDir)) {
