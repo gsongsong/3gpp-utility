@@ -50,11 +50,15 @@
       ]
     },
     "mac": {
-      "asar": false,
+      "asarUnpack": [
+        "dist/electron/worker/worker.js"
+      ],
       "icon": "build/icons/icon.icns"
     },
     "win": {
-      "asar": false,
+      "asarUnpack": [
+        "dist/electron/worker/worker.js"
+      ],
       "icon": "build/icons/icon.ico",
       "target": [
         {
@@ -67,7 +71,9 @@
       ]
     },
     "linux": {
-      "asar": false,
+      "asarUnpack": [
+        "dist/electron/worker/worker.js"
+      ],
       "icon": "build/icons"
     }
   },
