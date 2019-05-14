@@ -1,5 +1,6 @@
 'use strict'
 
+import { fork } from 'child_process'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import * as request from 'request'
@@ -18,6 +19,7 @@ if (process.env.NODE_ENV !== 'development') {
 
 let mainWindow
 let workerWindow
+let worker
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
@@ -36,6 +38,12 @@ function createWindow () {
   workerWindow.loadURL(`${winURL}#/worker`)
   workerWindow.on('closed', () => {
     app.quit()
+  })
+
+  worker = fork('worker.js')
+  worker.on('message', (msg) => {
+    const {event, data} = msg
+    mainWindow.webContents.send(event, data)
   })
 
   ipcMain.on('worker-ready', (event, data) => {
