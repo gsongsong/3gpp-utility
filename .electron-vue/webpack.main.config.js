@@ -7,6 +7,7 @@ const { dependencies } = require('../package.json')
 const webpack = require('webpack')
 
 const BabiliWebpackPlugin = require('babili-webpack-plugin')
+const CopyWebpackPlugin = require('copy-webpack-plugin')
 
 let mainConfig = {
   entry: {
@@ -74,6 +75,13 @@ if (process.env.NODE_ENV !== 'production') {
 if (process.env.NODE_ENV === 'production') {
   mainConfig.plugins.push(
     new BabiliWebpackPlugin(),
+    new CopyWebpackPlugin([
+      {
+        from: path.join(__dirname, '../worker'),
+        to: path.join(__dirname, '../dist/electron/worker'),
+        ignore: ['.*']
+      }
+    ]),
     new webpack.DefinePlugin({
       'process.env.NODE_ENV': '"production"'
     })

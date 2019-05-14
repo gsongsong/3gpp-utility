@@ -1,12 +1,13 @@
 'use strict'
 
+import { fork } from 'child_process'
 import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'fs'
 import { join } from 'path'
 import * as request from 'request'
 import { parse } from 'url'
 import * as urlJoin from 'url-join'
 import { app, BrowserWindow, ipcMain } from 'electron'
-import { repository } from '../../package.json'
+import { repository, version } from '../../package.json'
 
 /**
  * Set `__static` path to static files in production
@@ -18,6 +19,10 @@ if (process.env.NODE_ENV !== 'development') {
 
 let mainWindow
 let workerWindow
+let worker
+const workerPath = process.env.NODE_ENV === 'development'
+  ? 'worker/worker.js'
+  : join(__dirname, 'worker/worker.js')
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
@@ -36,6 +41,12 @@ function createWindow () {
   workerWindow.loadURL(`${winURL}#/worker`)
   workerWindow.on('closed', () => {
     app.quit()
+  })
+
+  worker = fork(workerPath)
+  worker.on('message', (msg) => {
+    const {event, data} = msg
+    mainWindow.webContents.send(event, data)
   })
 
   ipcMain.on('worker-ready', (event, data) => {
@@ -62,15 +73,17 @@ function createWindow () {
   })
 
   ipcMain.on('format-request', (event, data) => {
-    workerWindow.webContents.send('format-request', data)
-  })
-
-  ipcMain.on('format-path-request', (event, data) => {
-    mainWindow.webContents.send('format-path-request')
+    worker.send({
+      event: 'format-request',
+      data
+    })
   })
 
   ipcMain.on('format-path-response', (event, data) => {
-    workerWindow.webContents.send('format-path-response', data)
+    worker.send({
+      event: 'format-path-response',
+      data
+    })
   })
 
   ipcMain.on('format-response', (event, data) => {
@@ -133,7 +146,6 @@ app.on('ready', () => {
  */
 
 function checkVersion (event) {
-  let version = app.getVersion()
   let appPath = app.getPath('home')
   let appDir = join(appPath, '.3gpp-electron')
   if (!existsSync(appDir)) {

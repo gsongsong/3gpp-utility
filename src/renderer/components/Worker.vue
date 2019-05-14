@@ -9,8 +9,7 @@
 
   import * as extractRan2 from 'third-gen-asn1-extractor'
   import {parse as parseRan2} from 'third-gen-asn1-parser'
-  import { format as formatRan2 } from 'third-gen-message-formatter-ran2'
-  import { parse as parseRan3, format as formatRan3 } from 'third-gen-message-formatter-ran3'
+  import { parse as parseRan3 } from 'third-gen-message-formatter-ran3'
 
   import { diffAll as diff } from 'third-gen-message-diff'
   import * as pug from 'pug'
@@ -56,37 +55,6 @@
           result = {error: e}
         }
         event.sender.send('ie-list-response', JSON.stringify(result))
-      })
-      ipcRenderer.on('format-request', (event, data/* filePath, specType, msgIeName, doNotExpand */) => {
-        let {filePath, specType, msgIeName, raw} = JSON.parse(data)
-        try {
-          if (specType === 'RRC Protocol') {
-            let text = extractRan2(readFileSync(filePath, 'utf8'))
-            let asn1Json = parseRan2(text)
-            this.formatted = formatRan2(msgIeName, asn1Json, raw)
-          } else if (specType === 'Application Protocol') {
-            let html = readFileSync(filePath, 'utf8')
-            let definitions = parseRan3(html)
-            this.formatted = formatRan3(msgIeName, definitions, raw)
-          }
-          event.sender.send('format-path-request')
-        } catch (e) {
-          event.sender.send('format-response', JSON.stringify({error: e}))
-        }
-      })
-      ipcRenderer.on('format-path-response', (event, data) => {
-        let { filePath } = JSON.parse(data)
-        try {
-          this.formatted.write(filePath, (err, stats) => {
-            if (err) {
-              event.sender.send('format-response', JSON.stringify({error: err}))
-            } else {
-              event.sender.send('format-response', JSON.stringify({success: true}))
-            }
-          })
-        } catch (e) {
-          event.sender.send('format-response', JSON.stringify({error: e}))
-        }
       })
       ipcRenderer.on('idc-request', (event, data) => {
         let { rat1Dl, rat1Ul, rat2Dl, rat2Ul, orderHarmonics, orderImd } = JSON.parse(data)
