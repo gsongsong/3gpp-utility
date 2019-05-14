@@ -20,6 +20,9 @@ if (process.env.NODE_ENV !== 'development') {
 let mainWindow
 let workerWindow
 let worker
+const workerPath = process.env.NODE_ENV === 'development'
+  ? 'worker/worker.js'
+  : join(__dirname, 'worker/worker.js')
 const winURL = process.env.NODE_ENV === 'development'
   ? `http://localhost:9080`
   : `file://${__dirname}/index.html`
@@ -40,7 +43,7 @@ function createWindow () {
     app.quit()
   })
 
-  worker = fork('worker.js')
+  worker = fork(workerPath)
   worker.on('message', (msg) => {
     const {event, data} = msg
     mainWindow.webContents.send(event, data)
@@ -70,15 +73,17 @@ function createWindow () {
   })
 
   ipcMain.on('format-request', (event, data) => {
-    workerWindow.webContents.send('format-request', data)
-  })
-
-  ipcMain.on('format-path-request', (event, data) => {
-    mainWindow.webContents.send('format-path-request')
+    worker.send({
+      event: 'format-request',
+      data
+    })
   })
 
   ipcMain.on('format-path-response', (event, data) => {
-    workerWindow.webContents.send('format-path-response', data)
+    worker.send({
+      event: 'format-path-response',
+      data
+    })
   })
 
   ipcMain.on('format-response', (event, data) => {

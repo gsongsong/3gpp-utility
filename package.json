@@ -50,9 +50,11 @@
       ]
     },
     "mac": {
+      "asar": false,
       "icon": "build/icons/icon.icns"
     },
     "win": {
+      "asar": false,
       "icon": "build/icons/icon.ico",
       "target": [
         {
@@ -65,6 +67,7 @@
       ]
     },
     "linux": {
+      "asar": false,
       "icon": "build/icons"
     }
   },
