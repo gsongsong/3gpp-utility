@@ -77,7 +77,7 @@ if (process.env.NODE_ENV === 'production') {
     new BabiliWebpackPlugin(),
     new CopyWebpackPlugin([
       {
-        from: path.join(__dirname, '../worker'),
+        from: path.join(__dirname, '../src/worker'),
         to: path.join(__dirname, '../dist/electron/worker'),
         ignore: ['.*']
       }
