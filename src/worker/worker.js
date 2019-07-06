@@ -12,7 +12,7 @@ process.on('message', (msg) => {
   handlers[event](data)
 })
 
-handlers = {
+const handlers = {
   'format-request': format,
   'format-path-response': saveFormatted
 }
@@ -31,7 +31,7 @@ function format (data) {
       formatted = formatRan3(msgIeName, definitions, raw)
     }
     process.send({
-      event: 'format-path-request',
+      event: 'format-path-request'
     })
   } catch (e) {
     process.send({
@@ -41,7 +41,7 @@ function format (data) {
   }
 }
 
-function saveFormatted(data) {
+function saveFormatted (data) {
   let { filePath } = JSON.parse(data)
   try {
     formatted.write(filePath, (err, stats) => {
@@ -57,7 +57,7 @@ function saveFormatted(data) {
   } catch (e) {
     process.send({
       event: 'format-response',
-      data: JSON.stringify({error: err})
+      data: JSON.stringify({error: e})
     })
   }
 }

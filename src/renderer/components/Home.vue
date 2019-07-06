@@ -11,8 +11,8 @@
       </b-field>
     </div>
     <div id="specWatchListWrapper" class="section columns">
-      <div v-for="(data, sn) in watchList" v-bind:key="sn" class="column is-one-third">
-        <spec-table :heading="sn" :data="data.files" :lastUpdate="new Date(data.lastUpdate)"
+      <div v-for="sn in watchListSpecNumbers" v-bind:key="sn" class="column is-one-third">
+        <spec-table :heading="sn" :data="watchList[sn].files" :lastUpdate="new Date(watchList[sn].lastUpdate)"
           @spec-list-updating="working(sn)" @spec-list-change="update($event, sn)"
           @remove="remove(sn)" />
       </div>
@@ -33,6 +33,7 @@
       return {
         specNumber: '',
         watchListFilePath: '',
+        watchListSpecNumbers: [],
         watchList: {}
       }
     },
@@ -49,6 +50,8 @@
         if (this.watchList[specNumber]) {
           return
         }
+        this.watchListSpecNumbers.push(specNumber)
+        this.watchListSpecNumbers = this.watchListSpecNumbers.sort()
         this.$set(this.watchList, specNumber, {
           files: [],
           lastUpdate: null,
@@ -70,6 +73,12 @@
         this.save()
       },
       remove (specNumber) {
+        const index = this.watchListSpecNumbers.findIndex((element) => {
+          return element === specNumber
+        })
+        if (index !== -1) {
+          this.watchListSpecNumbers.splice(index, 1)
+        }
         this.$delete(this.watchList, specNumber)
         this.save()
       },
@@ -87,6 +96,7 @@
         writeFileSync(this.watchListFilePath, JSON.stringify({}))
       }
       this.watchList = JSON.parse(readFileSync(this.watchListFilePath, 'utf8'))
+      this.watchListSpecNumbers = Object.keys(this.watchList).sort()
       for (let specNumber in this.watchList) {
         this.$set(this.watchList, specNumber, Object.assign(this.watchList[specNumber], {completed: false}))
       }
