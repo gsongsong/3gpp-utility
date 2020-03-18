@@ -1,5 +1,10 @@
 <template>
   <div id="wrapper" class="section">
+    <b-field grouped position="is-right">
+      <button class="button is-dark" @click="downloadSpec()">
+        Download spec
+      </button>
+    </b-field>
     <b-field class="file">
       <b-upload v-model="file" @input="checkSpecType($event)">
         <a class="button is-success">Choose spec file</a>
@@ -97,6 +102,9 @@
           specType: this.specType
         }
         ipcRenderer.send('ie-list-request', JSON.stringify(data))
+      },
+      downloadSpec () {
+        shell.openExternal('https://github.com/gsongsong/3gpp-specs')
       },
       format (msgIeName) {
         this.isWorking = true
