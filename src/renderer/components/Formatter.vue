@@ -100,7 +100,7 @@
       },
       format (msgIeName) {
         this.isWorking = true
-        if (msgIeName === '__all') {
+        if (msgIeName === 'all') {
           this.msgIeName = ''
         }
         let data = {
