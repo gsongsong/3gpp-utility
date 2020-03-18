@@ -7,9 +7,7 @@
   import { join as joinPath, parse as parsePath } from 'path'
   import { ipcRenderer } from 'electron'
 
-  import * as extractRan2 from 'third-gen-asn1-extractor'
-  import {parse as parseRan2} from 'third-gen-asn1-parser'
-  import { parse as parseRan3 } from 'third-gen-message-formatter-ran3'
+  import { asn1, ran3Ap } from 'third-gen'
 
   import { diffAll as diff } from 'third-gen-message-diff'
   import * as pug from 'pug'
@@ -35,15 +33,15 @@
         let result = {}
         try {
           if (specType === 'RRC Protocol') {
-            let text = extractRan2(readFileSync(filePath, 'utf8'))
-            let asn1Json = parseRan2(text)
+            let text = readFileSync(filePath, 'utf8')
+            let asn1Json = asn1.parse(text)
             result.msgIeList = []
             for (let moduleName in asn1Json) {
-              result.msgIeList = result.msgIeList.concat(Object.keys(asn1Json[moduleName]))
+              result.msgIeList = result.msgIeList.concat(Object.keys(asn1Json[moduleName].assignments))
             }
           } else if (specType === 'Application Protocol') {
             let html = readFileSync(filePath, 'utf8')
-            let definitions = parseRan3(html)
+            let definitions = ran3Ap.parse(html)
             result.msgIeList = []
             for (let sectionNumber in definitions) {
               if (definitions[sectionNumber].name) {

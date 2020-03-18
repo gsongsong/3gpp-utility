@@ -1,5 +1,10 @@
 <template>
   <div id="wrapper" class="section">
+    <b-field grouped position="is-right">
+      <button class="button is-dark" @click="downloadSpec()">
+        Download spec
+      </button>
+    </b-field>
     <b-field class="file">
       <b-upload v-model="file" @input="checkSpecType($event)">
         <a class="button is-success">Choose spec file</a>
@@ -32,7 +37,7 @@
         </p>
         <p class="control">
           <b-tooltip label="Application Protocol only" position="is-right" type="is-info">
-            <button class="button is-success" @click="format('__all')"
+            <button class="button is-success" @click="format('all')"
               :disabled="specType !== 'Application Protocol'">
               Format all
             </button>
@@ -76,17 +81,9 @@
           return
         }
         this.isWorking = true
-        let fs = require('fs')
-        let content = fs.readFileSync(file.path, 'utf8')
-        let indexRrc = content.indexOf('Radio Resource Control')
-        let indexAp = content.indexOf('Application Protocol')
-        if (indexRrc === -1 && indexAp === -1) {
-          this.specType = 'Unknown'
-          return
-        }
-        if (indexRrc >= 0 && (indexAp === -1 || (indexAp >= 0 && indexRrc < indexAp))) {
+        if (file.name.includes('asn1')) {
           this.specType = 'RRC Protocol'
-        } else if (indexAp >= 0 && (indexRrc === -1 || (indexRrc >= 0 && indexAp < indexRrc))) {
+        } else if (file.name.includes('htm')) {
           this.specType = 'Application Protocol'
         } else {
           this.isWorking = false
@@ -98,9 +95,12 @@
         }
         ipcRenderer.send('ie-list-request', JSON.stringify(data))
       },
+      downloadSpec () {
+        shell.openExternal('https://github.com/gsongsong/3gpp-specs')
+      },
       format (msgIeName) {
         this.isWorking = true
-        if (msgIeName === '__all') {
+        if (msgIeName === 'all') {
           this.msgIeName = ''
         }
         let data = {
