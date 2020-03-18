@@ -37,7 +37,7 @@
         </p>
         <p class="control">
           <b-tooltip label="Application Protocol only" position="is-right" type="is-info">
-            <button class="button is-success" @click="format('__all')"
+            <button class="button is-success" @click="format('all')"
               :disabled="specType !== 'Application Protocol'">
               Format all
             </button>
