@@ -89,6 +89,7 @@
     "diff2html": "^2.7.0",
     "excel4node": "^1.7.0",
     "flatted": "^2.0.0",
+    "lodash": "^4.17.15",
     "pug": "^2.0.3",
     "third-gen": "github:gsongsong/3gpp",
     "third-gen-asn1-extractor": "^1.0.2",
