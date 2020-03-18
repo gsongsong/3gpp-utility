@@ -81,17 +81,9 @@
           return
         }
         this.isWorking = true
-        let fs = require('fs')
-        let content = fs.readFileSync(file.path, 'utf8')
-        let indexRrc = content.indexOf('Radio Resource Control')
-        let indexAp = content.indexOf('Application Protocol')
-        if (indexRrc === -1 && indexAp === -1) {
-          this.specType = 'Unknown'
-          return
-        }
-        if (indexRrc >= 0 && (indexAp === -1 || (indexAp >= 0 && indexRrc < indexAp))) {
+        if (file.name.includes('asn1')) {
           this.specType = 'RRC Protocol'
-        } else if (indexAp >= 0 && (indexRrc === -1 || (indexRrc >= 0 && indexAp < indexRrc))) {
+        } else if (file.name.includes('htm')) {
           this.specType = 'Application Protocol'
         } else {
           this.isWorking = false
