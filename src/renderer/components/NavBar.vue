@@ -26,8 +26,7 @@
             <router-link to="/formatter" class="navbar-item">Formatter</router-link>
             <!-- <router-link to="/diff" class="navbar-item">Diff</router-link>
           </div>
-        </div>
-        <router-link to="/idc" class="navbar-item">HM/IMD</router-link> -->
+        </div>-->
       </div>
     </div>
     <div class="navbar-end">
