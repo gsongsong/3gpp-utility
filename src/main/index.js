@@ -62,10 +62,6 @@ function createWindow () {
     })
   })
 
-  ipcMain.on('ie-list-response', (event, data) => {
-    mainWindow.webContents.send('ie-list-response', data)
-  })
-
   ipcMain.on('format-request', (event, data) => {
     worker.send({
       event: 'format-request',
@@ -78,10 +74,6 @@ function createWindow () {
       event: 'format-path-response',
       data
     })
-  })
-
-  ipcMain.on('format-response', (event, data) => {
-    mainWindow.webContents.send('format-response', data)
   })
 
   mainWindow.on('closed', () => {
