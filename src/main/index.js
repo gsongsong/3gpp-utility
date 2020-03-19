@@ -18,7 +18,6 @@ if (process.env.NODE_ENV !== 'development') {
 }
 
 let mainWindow
-let workerWindow
 let worker
 const workerPath = process.env.NODE_ENV === 'development'
   ? 'src/worker/worker.js'
@@ -37,25 +36,17 @@ function createWindow () {
     height: 600
   })
 
-  workerWindow = new BrowserWindow({show: process.env.NODE_ENV === 'development'})
-  workerWindow.loadURL(`${winURL}#/worker`)
-  workerWindow.on('closed', () => {
-    app.quit()
-  })
+  let appPath = app.getPath('home')
+  let appDir = join(appPath, '.3gpp-electron')
+  if (!existsSync(appDir)) {
+    mkdirSync(appDir)
+  }
+  mainWindow.loadURL(winURL)
 
   worker = fork(workerPath)
   worker.on('message', (msg) => {
     const {event, data} = msg
     mainWindow.webContents.send(event, data)
-  })
-
-  ipcMain.on('worker-ready', (event, data) => {
-    let appPath = app.getPath('home')
-    let appDir = join(appPath, '.3gpp-electron')
-    if (!existsSync(appDir)) {
-      mkdirSync(appDir)
-    }
-    mainWindow.loadURL(winURL)
   })
 
   ipcMain.on('version-check-request', (event, data) => {
@@ -65,7 +56,10 @@ function createWindow () {
   })
 
   ipcMain.on('ie-list-request', (event, data) => {
-    workerWindow.webContents.send('ie-list-request', data)
+    worker.send({
+      event: 'ie-list-request',
+      data
+    })
   })
 
   ipcMain.on('ie-list-response', (event, data) => {

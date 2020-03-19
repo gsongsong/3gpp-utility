@@ -8,17 +8,22 @@ process.on('message', (msg) => {
 })
 
 const handlers = {
+  'ie-list-request': ieList,
   'format-request': format,
   'format-path-response': saveFormatted
 }
 
+let asn1Json
+let definitions
 let formatted
 function format (data) {
   let {filePath, specType, msgIeName, raw} = JSON.parse(data)
   try {
     if (specType === 'RRC Protocol') {
-      let text = readFileSync(filePath, 'utf8')
-      let asn1Json = asn1.parse(text)
+      if (!asn1Json) {
+        let text = readFileSync(filePath, 'utf8')
+        asn1Json = asn1.parse(text)
+      }
       let msgIes = asn1.findMsgIes(msgIeName, asn1Json)
       if (!raw) {
         let asn1JsonClone = cloneDeep(asn1Json)
@@ -29,8 +34,10 @@ function format (data) {
       }
       formatted = asn1.formatXlsx(msgIes, asn1Json)
     } else if (specType === 'Application Protocol') {
-      let html = readFileSync(filePath, 'utf8')
-      let definitions = ran3Ap.parse(html)
+      if (!definitions) {
+        let html = readFileSync(filePath, 'utf8')
+        definitions = ran3Ap.parse(html)
+      }
       let msgIeDefinitions = null
       if (msgIeName === 'all') {
         msgIeDefinitions = Object.keys(definitions).filter((key) => {
@@ -64,6 +71,36 @@ function format (data) {
       data: JSON.stringify({error: e})
     })
   }
+}
+
+function ieList (data) {
+  let {filePath, specType} = JSON.parse(data)
+  let result = {}
+  try {
+    if (specType === 'RRC Protocol') {
+      let text = readFileSync(filePath, 'utf8')
+      asn1Json = asn1.parse(text)
+      result.msgIeList = []
+      for (let moduleName in asn1Json) {
+        result.msgIeList = result.msgIeList.concat(Object.keys(asn1Json[moduleName].assignments))
+      }
+    } else if (specType === 'Application Protocol') {
+      let html = readFileSync(filePath, 'utf8')
+      definitions = ran3Ap.parse(html)
+      result.msgIeList = []
+      for (let sectionNumber in definitions) {
+        if (definitions[sectionNumber].name) {
+          result.msgIeList.push(definitions[sectionNumber].name)
+        }
+      }
+    }
+  } catch (e) {
+    result = {error: e}
+  }
+  process.send({
+    event: 'ie-list-response',
+    data: JSON.stringify(result)
+  })
 }
 
 function saveFormatted (data) {
