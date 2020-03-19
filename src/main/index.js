@@ -90,14 +90,6 @@ function createWindow () {
     mainWindow.webContents.send('format-response', data)
   })
 
-  ipcMain.on('diff-request', (event, data) => {
-    workerWindow.webContents.send('diff-request', data)
-  })
-
-  ipcMain.on('diff-response', (event, data) => {
-    mainWindow.webContents.send('diff-response', data)
-  })
-
   mainWindow.on('closed', () => {
     app.quit()
   })

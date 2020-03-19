@@ -10,22 +10,8 @@
     </div>
     <div id="navbar-main" class="navbar-menu">
       <div class="navbar-start">
-        <!-- <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link">Standardization</a>
-
-          <div class="navbar-dropdown"> -->
-            <router-link to="/" class="navbar-item">Specification</router-link>
-          <!-- </div>
-        </div> -->
-
-        <!-- <div class="navbar-item has-dropdown is-hoverable">
-          <a class="navbar-link">Message/IE</a>
-
-          <div class="navbar-dropdown"> -->
-            <router-link to="/formatter" class="navbar-item">Formatter</router-link>
-            <!-- <router-link to="/diff" class="navbar-item">Diff</router-link>
-          </div>
-        </div>-->
+        <router-link to="/" class="navbar-item">Specification</router-link>
+        <router-link to="/formatter" class="navbar-item">Formatter</router-link>
       </div>
     </div>
     <div class="navbar-end">
