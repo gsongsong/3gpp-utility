@@ -16,11 +16,6 @@ export default new Router({
       component: require('@/components/Formatter').default
     },
     {
-      path: '/worker',
-      name: 'worker',
-      component: require('@/components/Worker').default
-    },
-    {
       path: '*',
       redirect: '/'
     }
